@@ -8,15 +8,14 @@ int main(void)
     struct myStruct
     {
         int age;
-        char name[50];
+        char name;
     };
-    struct myStruct s1;
-    s1.age = 10;
-    struct myStruct *ps =&s1;
-    strcpy(s1.name, "mostafa haydar");
-    printf("my age is :%d\n", s1.age);
-    printf("my name is :%s\n", s1.name);
-    printf("the adresse of this pointer is:%p", &s1);
-    printf("the adresse of this pointer is:%p", ps+1);
+    struct myStruct s1[10];
+    s1[0].age=10;
+    s1[0].name='c';
+    s1[1].age=NULL;
+    s1[1].name=NULL;
+    printf("%d", s1[0].age);
+    printf("%d", s1[1].age);
     return 0;
 }
