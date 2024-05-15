@@ -58,6 +58,7 @@
   "C_Cpp_Runner.msvcSecureNoWarnings": false,
   "files.associations": {
     "bank.C": "cpp",
-    "bank": "c"
+    "bank": "c",
+    "string.h": "c"
   }
 }

@@ -11,11 +11,19 @@ int main(void)
         char name;
     };
     struct myStruct s1[10];
-    s1[0].age=10;
-    s1[0].name='c';
-    s1[1].age=NULL;
-    s1[1].name=NULL;
-    printf("%d", s1[0].age);
-    printf("%d", s1[1].age);
+    for (int i = 0; i < 10; i++)
+    {
+        s1[i].age = 1;
+    }
+
+    struct myStruct *ps1[10];
+    for (int i = 0; i < 10; i++)
+    {
+        ps1[i] = &s1[i];
+        printf("add %p   ::::::::::::: add p %p\n", &s1[i], ps1[i]);
+    }
+    printf("%d\n", s1[0].age);
+    ps1[0]->age = 10;
+    printf("%d\n", s1[0].age);
     return 0;
 }
