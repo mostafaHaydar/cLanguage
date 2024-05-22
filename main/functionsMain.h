@@ -1,10 +1,10 @@
-#include <stdio.h>
 #include <stdbool.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-struct CLASS
-{
+
+struct CLASS {
   int id;
   char name[50];
 };
@@ -12,53 +12,47 @@ struct CLASS
 int lastClassId = 0;
 int *pLastClassId = &lastClassId;
 
-void clearInputBuffer()
-{
+void clearInputBuffer() {
   int c;
   while ((c = getchar()) != '\n' && c != EOF)
     ;
 }
 
-struct CLASS createNewClass(int *pLastClassId)
-{
+struct CLASS createNewClass(int *pLastClassId) {
   system("cls");
 
-  struct CLASS class;
+  struct CLASS classS;
   char tmpName[50];
 
-  class.id = *pLastClassId;
+  classS.id = *pLastClassId;
   *pLastClassId = (*pLastClassId) + 1;
 
-  printf("S'il te plaît, entre le nom de la classe :\n\t==> ");
+  printf("S'il te plait, entre le nom de la classe :\n\t==> ");
 
   fgets(tmpName, sizeof(tmpName), stdin);
   size_t len = strlen(tmpName);
-  if (len > 0 && tmpName[len - 1] == '\n')
-  {
+  if (len > 0 && tmpName[len - 1] == '\n') {
     tmpName[len - 1] = '\0';
   }
-  strcpy(class.name, tmpName);
+  strcpy(classS.name, tmpName);
 
-  return class;
+  return classS;
 }
 
-void updateClass(struct CLASS *class)
-{
+void updateClass(struct CLASS *classS) {
   system("cls");
   char tmpName[50];
-  printf("S'il te plaît, entre le nouveau nom de la class :\n\t==> ");
+  printf("S'il te plait, entre le nouveau nom de la class :\n\t==> ");
   fgets(tmpName, sizeof(tmpName), stdin);
   size_t len = strlen(tmpName);
-  if (len > 0 && tmpName[len - 1] == '\n')
-  {
+  if (len > 0 && tmpName[len - 1] == '\n') {
     tmpName[len - 1] = '\0';
   }
 
-  strcpy(class->name, tmpName);
+  strcpy(classS->name, tmpName);
 }
 
-struct STUDENT
-{
+struct STUDENT {
   int id;
   char firstName[50];
   char lastName[50];
@@ -70,57 +64,64 @@ struct STUDENT
 int lastStudentId = 0;
 int *pLastStudentId = &lastStudentId;
 
-int choseOperation(void)
-{
+int choseOperation(void) {
   int crudOperationNumber;
   int isNumber;
   system("cls");
 
-  printf("################ Bonjour dans mon système scolaire ################\n\n");
+  printf("################ Bonjour dans mon systeme scolaire "
+         "#####################\n\n");
+  printf("#\t:: cC ==> 0 :: pour ajouter une classe                           "
+         "#\n");
+  printf("#\t:: uC ==> 1 :: pour modifier les informations d'une classe       "
+         "#\n");
+  printf("#\t:: dC ==> 2 :: pour supprimer une classe                         "
+         "#\n");
+  printf("#\t:: rC ==> 3 :: pour voir les informations d'une classe           "
+         "#\n");
+  printf("#\t:: aC ==> 4 :: pour voir les informations de toutes les classes  "
+         "#\n\n");
+  printf("#\t:: cS ==> 5 :: pour ajouter un etudiant                          "
+         "#\n");
+  printf("#\t:: uS ==> 6 :: pour modifier les informations d'un etudiant      "
+         "#\n");
+  printf("#\t:: dS ==> 7 :: pour supprimer un etudiant                        "
+         "#\n");
+  printf("#\t:: rS ==> 8 :: pour voir les informations d'un etudiant          "
+         "#\n");
+  printf("#\t:: aS ==> 9 :: pour voir les informations de tous les etudiants  "
+         "#\n\n");
+  printf("#\t:: exit ==> 10 :: pour sortir                                    "
+         "#\n\n");
+  printf("#####################################################################"
+         "####\n\n");
 
-  printf("\t:: cS ==> 0 :: pour ajouter un étudiant\n");
-  printf("\t:: uS ==> 1 :: pour modifier les informations d'un étudiant\n");
-  printf("\t:: dS ==> 2 :: pour supprimer un étudiant\n");
-  printf("\t:: rS ==> 3 :: pour voir les informations d'un étudiant\n");
-  printf("\t:: aS ==> 4 :: pour voir les informations de tous les étudiants\n\n");
+  printf("Votre choix d'operation : ");
 
-  printf("\t:: cC ==> 5 :: pour ajouter une classe \n");
-  printf("\t:: uC ==> 6 :: pour modifier les informations d'une classe\n");
-  printf("\t:: dC ==> 7 :: pour supprimer une classe\n");
-  printf("\t:: rC ==> 8 :: pour voir les informations d'une classe\n");
-  printf("\t:: aC ==> 9 :: pour voir les informations de toutes les classes\n\n");
-
-  printf("\t:: exit ==> 10 :: pour sortir\n\n");
-  printf("Votre choix d'opération : ");
-
-  while (true)
-  {
+  while (true) {
     isNumber = scanf("%d", &crudOperationNumber);
     clearInputBuffer();
-    if (isNumber && crudOperationNumber < 11 && crudOperationNumber >= 0)
-    {
+    if (isNumber && crudOperationNumber < 11 && crudOperationNumber >= 0) {
       return crudOperationNumber;
       break;
-    }
-    else
-    {
+    } else {
       clearInputBuffer();
       system("cls");
       printf("Veuillez entrer un nombre entre 0 et 10.\n");
-      printf("Votre nombre d'opérations : ");
+      printf("Votre nombre d'operations : ");
     }
   }
 }
-int backToMenu(void)
-{
+int backToMenu(void) {
   int tmpVar;
-  printf("\nL'opération a été effectuée avec succès. Si vous pouvez aller vers la page principale, tapez:: 0 ==>");
+  printf("\nL'operation a ete effectuee avec succes.\n Si vous pouvez aller "
+         "vers la page principale, tapez:: 0 ");
   scanf("%d", &tmpVar);
   return tmpVar;
 }
 
-struct STUDENT createNewStudent(int *pLastStudentId, struct CLASS classes[100])
-{
+struct STUDENT createNewStudent(int *pLastStudentId,
+                                struct CLASS classes[100]) {
   system("cls");
   struct STUDENT student;
   char tmpFirstName[50];
@@ -133,22 +134,20 @@ struct STUDENT createNewStudent(int *pLastStudentId, struct CLASS classes[100])
   *pLastStudentId = (*pLastStudentId) + 1;
   //  first name ##################
 
-  printf("S'il te plaît, entre votre prénom:\n\t==> ");
+  printf("S'il te plait, entre votre prenom:\n\t==> ");
   fgets(tmpFirstName, sizeof(tmpFirstName), stdin);
   size_t len = strlen(tmpFirstName);
-  if (len > 0 && tmpFirstName[len - 1] == '\n')
-  {
+  if (len > 0 && tmpFirstName[len - 1] == '\n') {
     tmpFirstName[len - 1] = '\0';
   }
   strcpy(student.firstName, tmpFirstName);
 
   //  last name ##################
 
-  printf("S'il te plaît, entre votre nom:\n\t==> ");
+  printf("S'il te plait, entre votre nom:\n\t==> ");
   fgets(tmpLastName, sizeof(tmpLastName), stdin);
   len = strlen(tmpLastName);
-  if (len > 0 && tmpLastName[len - 1] == '\n')
-  {
+  if (len > 0 && tmpLastName[len - 1] == '\n') {
     tmpLastName[len - 1] = '\0';
   }
 
@@ -156,7 +155,7 @@ struct STUDENT createNewStudent(int *pLastStudentId, struct CLASS classes[100])
 
   //  age ##################
 
-  printf("S'il te plaît, entre votre âge:\n\t==> ");
+  printf("S'il te plait, entre votre age:\n\t==> ");
   scanf("%d", &tmpAge);
   student.age = tmpAge;
 
@@ -164,38 +163,32 @@ struct STUDENT createNewStudent(int *pLastStudentId, struct CLASS classes[100])
 
   //  email ################
 
-  printf("S'il te plaît, entre votre email:\n\t==> ");
+  printf("S'il te plait, entre votre email:\n\t==> ");
   fgets(tmpEmail, sizeof(tmpEmail), stdin);
   len = strlen(tmpEmail);
-  if (len > 0 && tmpEmail[len - 1] == '\n')
-  {
+  if (len > 0 && tmpEmail[len - 1] == '\n') {
     tmpEmail[len - 1] = '\0';
   }
   strcpy(student.email, tmpEmail);
   //  class  ################
-  printf("S'il te plaît, entre votre class:\n\t==> ");
+  printf("S'il te plait, entre votre class:\n\t==> ");
   bool isTheSame = false;
-  while (!isTheSame)
-  {
+  while (!isTheSame) {
     fgets(tmpClassName, sizeof(tmpClassName), stdin);
     len = strlen(tmpClassName);
-    if (len > 0 && tmpClassName[len - 1] == '\n')
-    {
+    if (len > 0 && tmpClassName[len - 1] == '\n') {
       tmpClassName[len - 1] = '\0';
     }
-    for (size_t i = 0; i < 100; i++)
-    {
-      if (!strcmp(classes[i].name, tmpClassName))
-      {
+    for (size_t i = 0; i < 100; i++) {
+      if (!strcmp(classes[i].name, tmpClassName)) {
         isTheSame = true;
         break;
       }
     }
-    if (!isTheSame)
-    {
+    if (!isTheSame) {
       system("cls");
       printf("ce class il n'exists pas dans l'ecole??\n");
-      printf("S'il te plaît, entre votre class::\n\t");
+      printf("S'il te plait, entre votre class::\n\t");
     }
   }
 
@@ -204,51 +197,46 @@ struct STUDENT createNewStudent(int *pLastStudentId, struct CLASS classes[100])
   return student;
 }
 
-void updateStudent(struct STUDENT *student)
-{
+void updateStudent(struct STUDENT *student) {
   system("cls");
 
   char tmpFirstName[50];
   char tmpLastName[50];
   char tmpEmail[100];
   char tmpClassName[50];
-  printf("S'il te plaît, entre le nouveau prénom:\n\t==> ");
+  printf("S'il te plait, entre le nouveau prenom:\n\t==> ");
   fgets(tmpFirstName, sizeof(tmpFirstName), stdin);
   size_t len = strlen(tmpFirstName);
-  if (len > 0 && tmpFirstName[len - 1] == '\n')
-  {
+  if (len > 0 && tmpFirstName[len - 1] == '\n') {
     tmpFirstName[len - 1] = '\0';
   }
 
   strcpy(student->firstName, tmpFirstName);
-  printf("S'il te plaît, entre le nouveau  nom:\n\t==> ");
+  printf("S'il te plait, entre le nouveau  nom:\n\t==> ");
   fgets(tmpLastName, sizeof(tmpLastName), stdin);
   len = strlen(tmpLastName);
-  if (len > 0 && tmpLastName[len - 1] == '\n')
-  {
+  if (len > 0 && tmpLastName[len - 1] == '\n') {
     tmpLastName[len - 1] = '\0';
   }
 
   strcpy(student->lastName, tmpLastName);
-  printf("S'il te plaît, entre le nouveau  âge:\n\t==> ");
+  printf("S'il te plait, entre le nouveau  age:\n\t==> ");
   scanf("%d", &student->age);
   clearInputBuffer();
 
-  printf("S'il te plaît, entre le nouveau  email:\n\t==> ");
+  printf("S'il te plait, entre le nouveau  email:\n\t==> ");
   fgets(tmpEmail, sizeof(tmpEmail), stdin);
   len = strlen(tmpEmail);
-  if (len > 0 && tmpEmail[len - 1] == '\n')
-  {
+  if (len > 0 && tmpEmail[len - 1] == '\n') {
     tmpEmail[len - 1] = '\0';
   }
 
   strcpy(student->email, tmpEmail);
 
-  printf("S'il te plaît, entre le nouveau  class:\n\t==> ");
+  printf("S'il te plait, entre le nouveau  class:\n\t==> ");
   fgets(tmpClassName, sizeof(tmpClassName), stdin);
   len = strlen(tmpClassName);
-  if (len > 0 && tmpClassName[len - 1] == '\n')
-  {
+  if (len > 0 && tmpClassName[len - 1] == '\n') {
     tmpClassName[len - 1] = '\0';
   }
 
