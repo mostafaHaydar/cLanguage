@@ -1,28 +1,8 @@
-#include <math.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-struct CLASS {
-  int id;
-  char name[50];
-};
-
-int lastClassId = 0;
-int *pLastClassId = &lastClassId;
-
-struct STUDENT {
-  int id;
-  char firstName[50];
-  char lastName[50];
-  int age;
-  char email[100];
-  char className[50];
-};
-
-int lastStudentId = 0;
-int *pLastStudentId = &lastStudentId;
+#include "myheader.h"
 
 void clearInputBuffer() {
   int c;

@@ -1,11 +1,16 @@
-#include "functionsMain.h"
+#include "myheader.h"
+#include "myFunctions.c"
 #include <math.h>
 #include <stdbool.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 int main(void) {
+  int lastClassId = 0;
+  int *pLastClassId = &lastClassId;
+
+  int lastStudentId = 0;
+  int *pLastStudentId = &lastStudentId;
 
   struct CLASS classes[100];
   struct CLASS *pClasses[100];
