@@ -1,7 +1,8 @@
-#include "myheader.h"
 #include "myFunctions.c"
+#include "myheader.h"
 #include <math.h>
 #include <stdbool.h>
+// #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -24,6 +25,8 @@ int main(void) {
     strcpy_s(classes[i].name, sizeof(classes[i].name), "null");
   }
 
+  getDataFromFileClasses(pClasses, pLastClassId);
+
   int tmpClassId;
 
   struct STUDENT students[100];
@@ -36,6 +39,8 @@ int main(void) {
   for (int i = 0; i < 100; i++) {
     students[i].id = -1;
   }
+
+  getDataFromFileStudents(pStudents, pLastStudentId);
 
   int tmpStudentId;
 
@@ -70,7 +75,6 @@ int main(void) {
       }
       break;
     case 4:
-
       allClassesInformation(pClasses);
       if (backToMenu() == 0) {
         break;
@@ -108,6 +112,8 @@ int main(void) {
       break;
     case 10:
       system("cls");
+      putDataIntoFileClasses(pClasses);
+      putDataIntoFileStudents(pStudents);
       exit(1);
       break;
     default:

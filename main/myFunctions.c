@@ -1,14 +1,15 @@
+#include "myheader.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "myheader.h"
 
 void clearInputBuffer() {
   int c;
   while ((c = getchar()) != '\n' && c != EOF)
     ;
 }
+
 int backToMenu(void) {
   int tmpVar;
   printf("\n Si vous pouvez aller "
@@ -16,6 +17,7 @@ int backToMenu(void) {
   scanf("%d", &tmpVar);
   return tmpVar;
 }
+
 void createNewClass(struct CLASS *pClasses[100], int *pLastClassId) {
   system("cls");
   char tmpName[50];
@@ -476,4 +478,193 @@ void allStudentsInformation(struct STUDENT *pStudents[100]) {
   } else {
     printf("\nL'operation a reussi.\n");
   }
+}
+
+void getDataFromFileClasses(struct CLASS *pClasses[100], int *pLastClassId) {
+  FILE *pFile = NULL;
+  pFile = fopen("classes.txt", "r");
+  char myString[1000];
+  fgets(myString, 1000, pFile);
+  fclose(pFile);
+  pFile = NULL;
+
+  char subString[100];
+
+  const char delimiter[] = "|";
+  const char subDelimiter[] = ":,";
+
+  char *outer_saveptr = NULL;
+  char *inner_saveptr = NULL;
+
+  char *token = strtok_s(myString, delimiter, &outer_saveptr);
+
+  enum dataElements { id, idVal, name, namVal };
+  enum dataElements state = id;
+
+  int lastClassId = 0;
+  int number;
+
+  while (token != NULL) {
+    strcpy_s(subString, sizeof(subString), token);
+    char *subToken = strtok_s(subString, subDelimiter, &inner_saveptr);
+
+    state = id;
+    while (subToken != NULL) {
+      switch (state) {
+
+      case 1:
+        number = atoi(subToken);
+        pClasses[lastClassId]->id = number;
+        break;
+
+      case 3:
+        strcpy_s(pClasses[lastClassId]->name,
+                 sizeof(pClasses[lastClassId]->name), subToken);
+        lastClassId = lastClassId + 1;
+        *pLastClassId = *pLastClassId + 1;
+        break;
+      }
+
+      state = state + 1;
+      subToken = strtok_s(NULL, subDelimiter, &inner_saveptr);
+    }
+    token = strtok_s(NULL, delimiter, &outer_saveptr);
+  }
+}
+
+void getDataFromFileStudents(struct STUDENT *pStudent[100],
+                             int *pLastStudentId) {
+  FILE *pFile = NULL;
+  pFile = fopen("students.txt", "r");
+  char myString[1000];
+  fgets(myString, 1000, pFile);
+  fclose(pFile);
+  pFile = NULL;
+
+  char subString[100];
+
+  const char delimiter[] = "|";
+  const char subDelimiter[] = ":,";
+
+  char *outer_saveptr = NULL;
+  char *inner_saveptr = NULL;
+
+  char *token = strtok_s(myString, delimiter, &outer_saveptr);
+
+  enum dataElements {
+    id,
+    idVal,
+    firstName,
+    firstNameVal,
+    lastName,
+    lastNameVal,
+    age,
+    ageVal,
+    email,
+    emailVal,
+    className,
+    classNAmeVal
+  };
+  enum dataElements state = id;
+
+  int lastStudentId = 0;
+  int number;
+
+  while (token != NULL) {
+    strcpy_s(subString, sizeof(subString), token);
+    char *subToken = strtok_s(subString, subDelimiter, &inner_saveptr);
+
+    state = id;
+    while (subToken != NULL) {
+      switch (state) {
+
+      case 1:
+        number = atoi(subToken);
+        pStudent[lastStudentId]->id = number;
+        break;
+
+      case 3:
+        strcpy_s(pStudent[lastStudentId]->firstName,
+                 sizeof(pStudent[lastStudentId]->firstName), subToken);
+        break;
+
+      case 5:
+        strcpy_s(pStudent[lastStudentId]->lastName,
+                 sizeof(pStudent[lastStudentId]->lastName), subToken);
+        break;
+      case 7:
+        number = atoi(subToken);
+        pStudent[lastStudentId]->age = number;
+        break;
+
+      case 9:
+        strcpy_s(pStudent[lastStudentId]->email,
+                 sizeof(pStudent[lastStudentId]->email), subToken);
+        break;
+
+      case 11:
+        strcpy_s(pStudent[lastStudentId]->className,
+                 sizeof(pStudent[lastStudentId]->className), subToken);
+        lastStudentId = lastStudentId + 1;
+        *pLastStudentId = *pLastStudentId + 1;
+        break;
+      }
+
+      state = state + 1;
+      subToken = strtok_s(NULL, subDelimiter, &inner_saveptr);
+    }
+    token = strtok_s(NULL, delimiter, &outer_saveptr);
+  }
+}
+void putDataIntoFileClasses(struct CLASS *pClasses[100]) {
+  FILE *pFile = NULL;
+  pFile = fopen("classes.txt", "w");
+  if (pFile != NULL) {
+    fprintf(pFile, "");
+    fclose(pFile);
+    pFile = NULL;
+  }
+
+  fclose(pFile);
+  pFile = NULL;
+
+  pFile = fopen("classes.txt", "a");
+  if (pFile != NULL) {
+    for (int i = 0; i < 100; i++) {
+      if (pClasses[i]->id != -1) {
+        fprintf(pFile, "id:%d,", pClasses[i]->id);
+        fprintf(pFile, "name:%s|", pClasses[i]->name);
+      }
+    }
+  }
+
+  fclose(pFile);
+  pFile = NULL;
+}
+void putDataIntoFileStudents(struct STUDENT *pStudents[100]) {
+  FILE *pFile = NULL;
+  pFile = fopen("students.txt", "w");
+  if (pFile != NULL) {
+    fprintf(pFile, "");
+    fclose(pFile);
+    pFile = NULL;
+  }
+  fclose(pFile);
+  pFile = NULL;
+  pFile = fopen("students.txt", "a");
+  if (pFile != NULL) {
+    for (int i = 0; i < 100; i++) {
+      if (pStudents[i]->id != -1) {
+        fprintf(pFile, "id:%d,", pStudents[i]->id);
+        fprintf(pFile, "firstName:%s,", pStudents[i]->firstName);
+        fprintf(pFile, "lastName:%s,", pStudents[i]->lastName);
+        fprintf(pFile, "age:%d,", pStudents[i]->age);
+        fprintf(pFile, "email:%s,", pStudents[i]->email);
+        fprintf(pFile, "className:%s|", pStudents[i]->className);
+      }
+    }
+  }
+
+  fclose(pFile);
+  pFile = NULL;
 }

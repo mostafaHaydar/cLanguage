@@ -32,4 +32,9 @@ void updateStudent(struct STUDENT *pStudent[100]);
 void deleteStudent(struct STUDENT *pStudent[100], int *pLastStudentId);
 void studentInformation(struct STUDENT *pStudents[100]);
 void allStudentsInformation(struct STUDENT *pStudents[100]);
+void getDataFromFileClasses(struct CLASS *pClasses[100], int *pLastClassId);
+void getDataFromFileStudents(struct STUDENT *pStudent[100],
+                             int *pLastStudentId);
+void putDataIntoFileClasses(struct CLASS *pClasses[100]);
+void putDataIntoFileStudents(struct STUDENT *pStudents[100]);
 #endif
