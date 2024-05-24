@@ -3,13 +3,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
 void clearInputBuffer() {
   int c;
   while ((c = getchar()) != '\n' && c != EOF)
     ;
 }
-
 int backToMenu(void) {
   int tmpVar;
   printf("\n Si vous pouvez aller "
@@ -17,30 +15,38 @@ int backToMenu(void) {
   scanf("%d", &tmpVar);
   return tmpVar;
 }
-
 void createNewClass(struct CLASS *pClasses[100], int *pLastClassId) {
   system("cls");
-  char tmpName[50];
+  char tmpName[100];
   bool isValid = false;
   bool alreadyExists = false;
   while (!isValid) {
-    printf("S'il te plait, entre le nom de la classe :\n\t==> ");
+
+    printf("S'il te plaît, entre le nom de la classe :\n\t==> ");
     fgets(tmpName, sizeof(tmpName), stdin);
     size_t len = strlen(tmpName);
     if (len > 0 && tmpName[len - 1] == '\n') {
       tmpName[len - 1] = '\0';
     }
+
     alreadyExists = false;
+
     for (size_t j = 0; j < 100; j++) {
       if (!strcmp(pClasses[j]->name, tmpName)) {
         system("cls");
-        printf("Ce nom de classe est deja utilise dans une autre classe.\n\t");
+        printf("Ce nom de classe est déjà utilisé dans une autre classe.\n\t");
         alreadyExists = true;
         break;
       }
     }
 
-    if (!alreadyExists) {
+    if (!isClassNameValid(tmpName)) {
+      system("cls");
+      printf("Ce nom de classe contient des caractères interdits ou est trop "
+             "court ou trop long.(5,100)\n\t");
+    }
+
+    if (!alreadyExists && isClassNameValid(tmpName)) {
       for (int i = 0; i < 100; i++) {
         if (pClasses[i]->id == -1) {
           pClasses[i]->id = *pLastClassId;
@@ -52,9 +58,8 @@ void createNewClass(struct CLASS *pClasses[100], int *pLastClassId) {
       }
     }
   }
-  printf("\nL'operation a reussi.\n");
+  printf("\nL'opération a réussi.\n");
 }
-
 void updateClass(struct CLASS *pClasses[100], struct STUDENT *pStudents[100]) {
 
   system("cls");
@@ -62,24 +67,49 @@ void updateClass(struct CLASS *pClasses[100], struct STUDENT *pStudents[100]) {
   int tmpClassId;
   bool classExists = false;
   system("cls");
-  printf("Pour modifier les informations d'une class, il faut d'abord l'ID "
-         "de cet class : ");
+  printf(
+      "Pour modifier les informations d'une classe, il faut d'abord son ID : ");
+
   scanf("%d", &tmpClassId);
   clearInputBuffer();
 
   for (int i = 0; i < 100; i++) {
     if (pClasses[i]->id == tmpClassId) {
       classExists = true;
-      char tmpClassNameForUpdateStudents[50];
+      char tmpClassNameForUpdateStudents[100];
       strcpy_s(tmpClassNameForUpdateStudents,
                sizeof(tmpClassNameForUpdateStudents), pClasses[i]->name);
-      char tmpName[50];
-      printf("S'il te plait, entre le nouveau nom de la class :\n\t==> ");
-      fgets(tmpName, sizeof(tmpName), stdin);
-      size_t len = strlen(tmpName);
-      if (len > 0 && tmpName[len - 1] == '\n') {
-        tmpName[len - 1] = '\0';
+      char tmpName[100];
+      bool isClassNameValidBool = false;
+      while (!isClassNameValidBool) {
+        printf("S'il te plaît, entre le nouveau nom de la classe :\n\t==> ");
+        fgets(tmpName, sizeof(tmpName), stdin);
+        size_t len = strlen(tmpName);
+        if (len > 0 && tmpName[len - 1] == '\n') {
+          tmpName[len - 1] = '\0';
+        }
+        bool isExists = false;
+        for (size_t j = 0; j < 100; j++) {
+          if (!strcmp(pClasses[j]->name, tmpName) && j != tmpClassId) {
+            system("cls");
+            printf(
+                "Ce nom de classe est déjà utilisé dans une autre classe.\n\t");
+            isExists = true;
+            break;
+          }
+        }
+        if (!isExists) {
+          if (!isClassNameValid(tmpName)) {
+            system("cls");
+            printf("Ce nom de classe contient des caractères interdits ou est "
+                   "trop "
+                   "court ou trop long.(5,100)\n\t");
+          } else {
+            isClassNameValidBool = true;
+          }
+        }
       }
+
       strcpy_s(pClasses[i]->name, sizeof(pClasses[i]->name), tmpName);
       for (size_t x = 0; x < 100; x++) {
         if (pStudents[x]->id != -1) {
@@ -96,20 +126,20 @@ void updateClass(struct CLASS *pClasses[100], struct STUDENT *pStudents[100]) {
   if (!classExists) {
     printf("\nIl n'existe pas de classe avec cet identifiant.\n");
   } else {
-    printf("\nL'operation a reussi.\n");
+    printf("\nL'opération a réussi avec succès.\n");
   }
 }
-
 void deleteClass(struct CLASS *pClasses[100], struct STUDENT *pStudent[100],
                  int *pLastClassId, int *pLastStudentId) {
   system("cls");
-  printf("Pour supprimer une class , il faut l'ID de cet class avant la "
+  printf("Pour supprimer une classe, il faut l'ID de cette classe avant la "
          "suppression : ");
+
   bool classExists = false;
   int tmpClassId;
   scanf("%d", &tmpClassId);
   clearInputBuffer();
-  char tmpClassNameForDeleteStudents[50];
+  char tmpClassNameForDeleteStudents[100];
   for (int i = 0; i < 100; i++) {
     if (pClasses[i]->id == tmpClassId) {
       classExists = true;
@@ -149,16 +179,17 @@ void deleteClass(struct CLASS *pClasses[100], struct STUDENT *pStudent[100],
   }
   if (!classExists) {
     printf("\nIl n'existe pas de classe avec cet identifiant.\n");
+
   } else {
-    printf("\nL'operation a reussi.\n");
+    printf("\nL'opération a réussi avec succès.\n");
   }
 }
-
 void classInformation(struct CLASS *pClasses[100]) {
   int tmpClassId;
   system("cls");
-  printf("Pour voir les informations d'une class, il faut l'ID de cet "
-         "class : ");
+  printf("Pour voir les informations d'une classe, il faut l'ID de cette "
+         "classe : ");
+
   scanf("%d", &tmpClassId);
   clearInputBuffer();
   system("cls");
@@ -173,12 +204,12 @@ void classInformation(struct CLASS *pClasses[100]) {
     }
   }
   if (!classExists) {
-    printf("\nIl n'existe pas de classe avec cet identifiant.\n");
+    printf("\nIl n'existe pas de classe avec ce identifiant.\n");
+
   } else {
-    printf("\nL'operation a reussi.\n");
+    printf("\nL'opération a réussi avec succès.\n");
   }
 }
-
 void allClassesInformation(struct CLASS *pClasses[100]) {
   system("cls");
   bool classExists = false;
@@ -193,18 +224,18 @@ void allClassesInformation(struct CLASS *pClasses[100]) {
     }
   }
   if (!classExists) {
-    printf("\nIl n'y a aucune classe dans cette ecole.\n");
+    printf("\nIl n'y a aucune classe dans ces écoles.\n");
+
   } else {
-    printf("\nL'operation a reussi.\n");
+    printf("\nL'opération a réussi avec succès.\n");
   }
 }
-
 int choseOperation(void) {
   int crudOperationNumber;
   int isNumber;
   system("cls");
 
-  printf("################ Bonjour dans mon systeme scolaire "
+  printf("################ Bonjour, dans mon système scolaire "
          "#####################\n\n");
   printf("#\t:: cC ==> 0 :: pour ajouter une classe                           "
          "#\n");
@@ -216,46 +247,42 @@ int choseOperation(void) {
          "#\n");
   printf("#\t:: aC ==> 4 :: pour voir les informations de toutes les classes  "
          "#\n\n");
-  printf("#\t:: cS ==> 5 :: pour ajouter un etudiant                          "
+  printf("#\t:: cS ==> 5 :: Pour ajouter un étudiant                          "
          "#\n");
-  printf("#\t:: uS ==> 6 :: pour modifier les informations d'un etudiant      "
+  printf("#\t:: uS ==> 6 :: pour modifier les informations d'un étudiant      "
          "#\n");
-  printf("#\t:: dS ==> 7 :: pour supprimer un etudiant                        "
+  printf("#\t:: dS ==> 7 :: pour supprimer un étudiant                        "
          "#\n");
-  printf("#\t:: rS ==> 8 :: pour voir les informations d'un etudiant          "
+  printf("#\t:: rS ==> 8 :: pour voir les informations d'un étudiant          "
          "#\n");
-  printf("#\t:: aS ==> 9 :: pour voir les informations de tous les etudiants  "
+  printf("#\t:: aS ==> 9 :: pour voir les informations de tous les étudiant   "
          "#\n\n");
   printf("#\t:: exit ==> 10 :: pour sortir                                    "
          "#\n\n");
   printf("#####################################################################"
          "####\n\n");
 
-  printf("Votre choix d'operation : ");
+  printf("Quelle opération souhaitez-vous effectuer ? : ");
 
   while (true) {
     isNumber = scanf("%d", &crudOperationNumber);
     clearInputBuffer();
     if (isNumber && crudOperationNumber < 11 && crudOperationNumber >= 0) {
       return crudOperationNumber;
-      break;
     } else {
-      clearInputBuffer();
       system("cls");
-      printf("Veuillez entrer un nombre entre 0 et 10.\n\t");
-      printf("Votre nombre d'operations :: ");
+      printf("Veuillez entrer un nombre entre 0 et 10.\n\n\t");
+      printf("Nombre d'opérations à effectuer :: ");
     }
   }
 }
-
 void createNewStudent(struct STUDENT *pStudent[100], int *pLastStudentId,
                       struct CLASS classes[100]) {
   system("cls");
-
-  char tmpFirstName[50];
-  char tmpLastName[50];
+  char tmpFirstName[100];
+  char tmpLastName[100];
   char tmpEmail[100];
-  char tmpClassName[50];
+  char tmpClassName[100];
   int tmpAge;
   for (int i = 0; i < 100; i++) {
     if (pStudent[i]->id == -1) {
@@ -263,45 +290,83 @@ void createNewStudent(struct STUDENT *pStudent[100], int *pLastStudentId,
       pStudent[i]->id = *pLastStudentId;
       *pLastStudentId = (*pLastStudentId) + 1;
       //  first name ##################
-
-      printf("S'il te plait, entre votre prenom:\n\t==> ");
-      fgets(tmpFirstName, sizeof(tmpFirstName), stdin);
-      size_t len = strlen(tmpFirstName);
-      if (len > 0 && tmpFirstName[len - 1] == '\n') {
-        tmpFirstName[len - 1] = '\0';
+      size_t len;
+      bool isFirstNameValid = false;
+      bool isLastNameValid = false;
+      bool isAgeValid = false;
+      bool isEmailValidBool = false;
+      while (!isFirstNameValid) {
+        printf("S'il te plaît, entre ton prénom :\n\t==> ");
+        fgets(tmpFirstName, sizeof(tmpFirstName), stdin);
+        len = strlen(tmpFirstName);
+        if (len > 0 && tmpFirstName[len - 1] == '\n') {
+          tmpFirstName[len - 1] = '\0';
+        }
+        if (isHummanNameValid(tmpFirstName)) {
+          strcpy(pStudent[i]->firstName, tmpFirstName);
+          isFirstNameValid = true;
+        } else {
+          system("cls");
+          printf("Ce prénom contient des caractères interdits ou est trop "
+                 "court ou trop long.(5,100)\n\t");
+        }
       }
-      strcpy(pStudent[i]->firstName, tmpFirstName);
 
       //  last name ##################
 
-      printf("S'il te plait, entre votre nom:\n\t==> ");
-      fgets(tmpLastName, sizeof(tmpLastName), stdin);
-      len = strlen(tmpLastName);
-      if (len > 0 && tmpLastName[len - 1] == '\n') {
-        tmpLastName[len - 1] = '\0';
-      }
+      while (!isLastNameValid) {
+        printf("S'il te plaît, entre ton nom:\n\t==> ");
+        fgets(tmpLastName, sizeof(tmpLastName), stdin);
+        len = strlen(tmpLastName);
+        if (len > 0 && tmpLastName[len - 1] == '\n') {
+          tmpLastName[len - 1] = '\0';
+        }
 
-      strcpy(pStudent[i]->lastName, tmpLastName);
+        strcpy(pStudent[i]->lastName, tmpLastName);
+
+        if (isHummanNameValid(tmpLastName)) {
+          strcpy(pStudent[i]->lastName, tmpLastName);
+          isLastNameValid = true;
+        } else {
+          system("cls");
+          printf("Ce nom contient des caractères interdits ou est trop "
+                 "court ou trop long.(5,100)\n\t");
+        }
+      }
 
       //  age ##################
-
-      printf("S'il te plait, entre votre age:\n\t==> ");
-      scanf("%d", &tmpAge);
-      pStudent[i]->age = tmpAge;
-
-      clearInputBuffer();
-
-      //  email ################
-
-      printf("S'il te plait, entre votre email:\n\t==> ");
-      fgets(tmpEmail, sizeof(tmpEmail), stdin);
-      len = strlen(tmpEmail);
-      if (len > 0 && tmpEmail[len - 1] == '\n') {
-        tmpEmail[len - 1] = '\0';
+      while (!isAgeValid) {
+        bool isNumber;
+        printf("S'il te plaît, entre ton âge:\n\t==> ");
+        isNumber = scanf("%d", &tmpAge);
+        if (isNumber && tmpAge > 15 && tmpAge < 25) {
+          pStudent[i]->age = tmpAge;
+          isAgeValid = true;
+        } else {
+          system("cls");
+          printf("S'il te plaît, entre un âge valide entre 15 et 25.\n\t");
+        }
+        clearInputBuffer();
       }
-      strcpy(pStudent[i]->email, tmpEmail);
+      //  email ################
+      while (!isEmailValidBool) {
+        printf("S'il te plaît, entre ton email:\n\t==> ");
+        fgets(tmpEmail, sizeof(tmpEmail), stdin);
+        len = strlen(tmpEmail);
+        if (len > 0 && tmpEmail[len - 1] == '\n') {
+          tmpEmail[len - 1] = '\0';
+        }
+        if (isEmailValid(tmpEmail)) {
+          strcpy(pStudent[i]->email, tmpEmail);
+          isEmailValidBool = true;
+        } else {
+          system("cls");
+          printf("S'il te plaît, entre un email valide.\n\t");
+        }
+      }
+
       //  class  ################
-      printf("S'il te plait, entre votre class:\n\t==> ");
+      printf("S'il te plaît, entre ta classe:\n\t==> ");
       bool isTheSame = false;
       while (!isTheSame) {
         fgets(tmpClassName, sizeof(tmpClassName), stdin);
@@ -317,8 +382,8 @@ void createNewStudent(struct STUDENT *pStudent[100], int *pLastStudentId,
         }
         if (!isTheSame) {
           system("cls");
-          printf("ce class il n'exists pas dans l'ecole??\n");
-          printf("S'il te plait, entre votre class::\n\t");
+          printf("Cette classe n'existe pas dans l'école??\n");
+          printf("S'il te plaît, entre ta classe::\n\t");
         }
       }
       strcpy(pStudent[i]->className, tmpClassName);
@@ -326,54 +391,130 @@ void createNewStudent(struct STUDENT *pStudent[100], int *pLastStudentId,
       //  end ##################
     }
   }
-  printf("\nL'operation a reussi.\n");
+  printf("\nL'opération a réussi avec succès.\n");
 }
 
 void updateStudent(struct STUDENT *pStudent[100]) {
   system("cls");
   bool studentExists = false;
-  printf("Pour modifier les informations d'un etudiant, il faut d'abord "
-         "l'ID de cet etudiant : ");
+  printf("Pour modifier les informations d'un étudiant, il faut d'abord l'ID "
+         "de cet étudiant : ");
+
   int tmpStudentId;
   scanf("%d", &tmpStudentId);
   clearInputBuffer();
   for (int i = 0; i < 100; i++) {
     if (pStudent[i]->id == tmpStudentId) {
       studentExists = true;
-      char tmpFirstName[50];
-      char tmpLastName[50];
+      char tmpFirstName[100];
+      char tmpLastName[100];
       char tmpEmail[100];
-      char tmpClassName[50];
-      printf("S'il te plait, entre le nouveau prenom:\n\t==> ");
-      fgets(tmpFirstName, sizeof(tmpFirstName), stdin);
-      size_t len = strlen(tmpFirstName);
-      if (len > 0 && tmpFirstName[len - 1] == '\n') {
-        tmpFirstName[len - 1] = '\0';
+      char tmpClassName[100];
+
+      size_t len;
+      bool isFirstNameValid = false;
+      bool isLastNameValid = false;
+      bool isAgeValid = false;
+
+      while (!isFirstNameValid) {
+        printf("S'il te plaît, entre le nouveau prénom:\n\t==> ");
+        fgets(tmpFirstName, sizeof(tmpFirstName), stdin);
+        len = strlen(tmpFirstName);
+        if (len > 0 && tmpFirstName[len - 1] == '\n') {
+          tmpFirstName[len - 1] = '\0';
+        }
+        if (isHummanNameValid(tmpFirstName)) {
+          strcpy(pStudent[i]->firstName, tmpFirstName);
+          isFirstNameValid = true;
+        } else {
+          system("cls");
+          printf("Ce prénom contient des caractères interdits ou est trop "
+                 "court ou trop long.(5,100)\n\t");
+        }
       }
 
-      strcpy(pStudent[i]->firstName, tmpFirstName);
-      printf("S'il te plait, entre le nouveau  nom:\n\t==> ");
-      fgets(tmpLastName, sizeof(tmpLastName), stdin);
-      len = strlen(tmpLastName);
-      if (len > 0 && tmpLastName[len - 1] == '\n') {
-        tmpLastName[len - 1] = '\0';
+      // printf("S'il te plaît, entre le nouveau prénom:\n\t==> ");
+      // fgets(tmpFirstName, sizeof(tmpFirstName), stdin);
+      // len = strlen(tmpFirstName);
+      // if (len > 0 && tmpFirstName[len - 1] == '\n') {
+      //   tmpFirstName[len - 1] = '\0';
+      // }
+      // strcpy(pStudent[i]->firstName, tmpFirstName);
+
+      while (!isLastNameValid) {
+        printf("S'il te plaît, entre le nouveau nom :\n\t==> ");
+        fgets(tmpLastName, sizeof(tmpLastName), stdin);
+        len = strlen(tmpLastName);
+        if (len > 0 && tmpLastName[len - 1] == '\n') {
+          tmpLastName[len - 1] = '\0';
+        }
+
+        strcpy(pStudent[i]->lastName, tmpLastName);
+
+        if (isHummanNameValid(tmpLastName)) {
+          strcpy(pStudent[i]->lastName, tmpLastName);
+          isLastNameValid = true;
+        } else {
+          system("cls");
+          printf("Ce nom contient des caractères interdits ou est trop "
+                 "court ou trop long.(5,100)\n\t");
+        }
       }
 
-      strcpy(pStudent[i]->lastName, tmpLastName);
-      printf("S'il te plait, entre le nouveau  age:\n\t==> ");
-      scanf("%d", &pStudent[i]->age);
-      clearInputBuffer();
+      // printf("S'il te plaît, entre le nouveau nom :\n\t==> ");
+      // fgets(tmpLastName, sizeof(tmpLastName), stdin);
+      // len = strlen(tmpLastName);
+      // if (len > 0 && tmpLastName[len - 1] == '\n') {
+      //   tmpLastName[len - 1] = '\0';
+      // }
 
-      printf("S'il te plait, entre le nouveau  email:\n\t==> ");
-      fgets(tmpEmail, sizeof(tmpEmail), stdin);
-      len = strlen(tmpEmail);
-      if (len > 0 && tmpEmail[len - 1] == '\n') {
-        tmpEmail[len - 1] = '\0';
+      // strcpy(pStudent[i]->lastName, tmpLastName);
+
+      while (!isAgeValid) {
+        bool isNumber;
+        int tmpAge;
+        printf("S'il te plaît, entre le nouvel âge:\n\t==> ");
+        isNumber = scanf("%d", &tmpAge);
+        if (isNumber && tmpAge > 15 && tmpAge < 25) {
+          pStudent[i]->age = tmpAge;
+          isAgeValid = true;
+        } else {
+          system("cls");
+          printf("S'il te plaît, entre un âge valide entre 15 et 25.\n\t");
+        }
+        clearInputBuffer();
       }
 
-      strcpy(pStudent[i]->email, tmpEmail);
+      // printf("S'il te plaît, entre le nouvel âge:\n\t==> ");
+      // scanf("%d", &pStudent[i]->age);
+      // clearInputBuffer();
+      bool isEmailValidBool = false;
+      while (!isEmailValidBool) {
+        printf("S'il te plaît, entre le nouvel email:\n\t==> ");
+        fgets(tmpEmail, sizeof(tmpEmail), stdin);
+        len = strlen(tmpEmail);
+        if (len > 0 && tmpEmail[len - 1] == '\n') {
+          tmpEmail[len - 1] = '\0';
+        }
+        if (isEmailValid(tmpEmail)) {
+          strcpy(pStudent[i]->email, tmpEmail);
+          isEmailValidBool = true;
+        } else {
+          system("cls");
+          printf("S'il te plaît, entre un email valide.\n\t");
+        }
+      }
 
-      printf("S'il te plait, entre le nouveau  class:\n\t==> ");
+      // printf("S'il te plaît, entre le nouvel email:\n\t==> ");
+      // fgets(tmpEmail, sizeof(tmpEmail), stdin);
+      // len = strlen(tmpEmail);
+      // if (len > 0 && tmpEmail[len - 1] == '\n') {
+      //   tmpEmail[len - 1] = '\0';
+      // }
+
+      // strcpy(pStudent[i]->email, tmpEmail);
+
+      printf("S'il te plaît, entre la nouvelle classe:\n\t==> ");
       fgets(tmpClassName, sizeof(tmpClassName), stdin);
       len = strlen(tmpClassName);
       if (len > 0 && tmpClassName[len - 1] == '\n') {
@@ -385,18 +526,19 @@ void updateStudent(struct STUDENT *pStudent[100]) {
     }
   }
   if (!studentExists) {
-    printf("\nIl n'existe pas d'eleve avec cet identifiant.\n");
+    printf("\nIl n'existe pas d'élève avec cet identifiant.\n");
 
   } else {
-    printf("\nL'operation a reussi.\n");
+    printf("\nL'opération a réussi avec succès.\n");
   }
 }
 
 void deleteStudent(struct STUDENT *pStudent[100], int *pLastStudentId) {
   system("cls");
 
-  printf("Pour supprimer un etudiant, il faut l'ID de cet etudiant avant "
-         "la suppression : ");
+  printf("Pour supprimer un étudiant, il faut l'ID de cet·te étudiant avant la "
+         "suppression : ");
+
   bool studentExists = false;
   int tmpStudentId;
   scanf("%d", &tmpStudentId);
@@ -422,16 +564,17 @@ void deleteStudent(struct STUDENT *pStudent[100], int *pLastStudentId) {
     }
   }
   if (!studentExists) {
-    printf("\nIl n'existe pas d'eleve avec cet identifiant.\n");
+    printf("\nIl n'existe pas d'élève avec cet identifiant.\n");
   } else {
-    printf("\nL'operation a reussi.\n");
+    printf("\nL'opération a réussi avec succès.\n");
   }
 }
 void studentInformation(struct STUDENT *pStudents[100]) {
   bool studentExists = false;
   system("cls");
-  printf("Pour voir les informations d'un etudiant, il faut l'ID de cet "
-         "etudiant : ");
+  printf("Pour voir les informations d'un étudiant, il faut l'ID de cet "
+         "étudiant : ");
+
   int tmpStudentId;
   scanf("%d", &tmpStudentId);
   clearInputBuffer();
@@ -441,19 +584,19 @@ void studentInformation(struct STUDENT *pStudents[100]) {
       studentExists = true;
       printf("_______________________________________________________\n\n");
       printf("id                   :: %d\n", pStudents[i]->id);
-      printf("prenom               :: %s\n", pStudents[i]->firstName);
+      printf("prénom               :: %s\n", pStudents[i]->firstName);
       printf("nom de famille       :: %s\n", pStudents[i]->lastName);
-      printf("age                  :: %d\n", pStudents[i]->age);
+      printf("âge                  :: %d\n", pStudents[i]->age);
       printf("mail                 :: %s\n", pStudents[i]->email);
-      printf("class                :: %s\n", pStudents[i]->className);
+      printf("classe               :: %s\n", pStudents[i]->className);
       printf("_______________________________________________________\n\n");
     }
   }
   if (!studentExists) {
-    printf("\nIl n'existe pas d'eleve avec cet identifiant.\n");
+    printf("\nIl n'existe pas d'élève avec cet identifiant.\n");
 
   } else {
-    printf("\nL'operation a reussi.\n");
+    printf("\nL'opération a réussi avec succès.\n");
   }
 }
 void allStudentsInformation(struct STUDENT *pStudents[100]) {
@@ -465,18 +608,18 @@ void allStudentsInformation(struct STUDENT *pStudents[100]) {
       printf("_______________________________________________________\n\n");
       printf("etudiant :: %d\n", i);
       printf("id                   :: %d\n", pStudents[i]->id);
-      printf("prenom               :: %s\n", pStudents[i]->firstName);
+      printf("prénom               :: %s\n", pStudents[i]->firstName);
       printf("nom de famille       :: %s\n", pStudents[i]->lastName);
-      printf("age                  :: %d\n", pStudents[i]->age);
+      printf("âge                  :: %d\n", pStudents[i]->age);
       printf("mail                 :: %s\n", pStudents[i]->email);
-      printf("class                :: %s\n", pStudents[i]->className);
+      printf("classe               :: %s\n", pStudents[i]->className);
       printf("_______________________________________________________\n\n");
     }
   }
   if (!studentExists) {
-    printf("\nIl n'existe pas d'eleve dans cette ecole.\n");
+    printf("\nIl n'existe pas d'élève dans cette école.\n");
   } else {
-    printf("\nL'operation a reussi.\n");
+    printf("\nL'opération a réussi avec succès.\n");
   }
 }
 
@@ -496,7 +639,7 @@ void getDataFromFileClasses(struct CLASS *pClasses[100], int *pLastClassId) {
   char *outer_saveptr = NULL;
   char *inner_saveptr = NULL;
 
-  char *token = strtok_s(myString, delimiter, &outer_saveptr);
+  char *token = (char *)strtok_s(myString, delimiter, &outer_saveptr);
 
   enum dataElements { id, idVal, name, namVal };
   enum dataElements state = id;
@@ -506,7 +649,7 @@ void getDataFromFileClasses(struct CLASS *pClasses[100], int *pLastClassId) {
 
   while (token != NULL) {
     strcpy_s(subString, sizeof(subString), token);
-    char *subToken = strtok_s(subString, subDelimiter, &inner_saveptr);
+    char *subToken = (char *)strtok_s(subString, subDelimiter, &inner_saveptr);
 
     state = id;
     while (subToken != NULL) {
@@ -526,9 +669,9 @@ void getDataFromFileClasses(struct CLASS *pClasses[100], int *pLastClassId) {
       }
 
       state = state + 1;
-      subToken = strtok_s(NULL, subDelimiter, &inner_saveptr);
+      subToken = (char *)strtok_s(NULL, subDelimiter, &inner_saveptr);
     }
-    token = strtok_s(NULL, delimiter, &outer_saveptr);
+    token = (char *)strtok_s(NULL, delimiter, &outer_saveptr);
   }
 }
 
@@ -549,7 +692,7 @@ void getDataFromFileStudents(struct STUDENT *pStudent[100],
   char *outer_saveptr = NULL;
   char *inner_saveptr = NULL;
 
-  char *token = strtok_s(myString, delimiter, &outer_saveptr);
+  char *token = (char *)strtok_s(myString, delimiter, &outer_saveptr);
 
   enum dataElements {
     id,
@@ -572,7 +715,7 @@ void getDataFromFileStudents(struct STUDENT *pStudent[100],
 
   while (token != NULL) {
     strcpy_s(subString, sizeof(subString), token);
-    char *subToken = strtok_s(subString, subDelimiter, &inner_saveptr);
+    char *subToken = (char *)strtok_s(subString, subDelimiter, &inner_saveptr);
 
     state = id;
     while (subToken != NULL) {
@@ -611,9 +754,9 @@ void getDataFromFileStudents(struct STUDENT *pStudent[100],
       }
 
       state = state + 1;
-      subToken = strtok_s(NULL, subDelimiter, &inner_saveptr);
+      subToken = (char *)strtok_s(NULL, subDelimiter, &inner_saveptr);
     }
-    token = strtok_s(NULL, delimiter, &outer_saveptr);
+    token = (char *)strtok_s(NULL, delimiter, &outer_saveptr);
   }
 }
 void putDataIntoFileClasses(struct CLASS *pClasses[100]) {
@@ -667,4 +810,52 @@ void putDataIntoFileStudents(struct STUDENT *pStudents[100]) {
 
   fclose(pFile);
   pFile = NULL;
+}
+
+bool isHummanNameValid(char name[100]) {
+  char notAllowedChars[] = "123456789#$^&*_-";
+  bool state = true;
+  if (strlen(name) < 5 || strlen(name) > 100) {
+    state = false;
+  }
+  if (state) {
+    for (size_t i = 0; i < strlen(name); i++) {
+      for (size_t j = 0; j < strlen(notAllowedChars); j++) {
+        if (name[i] == notAllowedChars[j]) {
+          state = false;
+          break;
+        }
+      }
+    }
+  }
+  return state;
+}
+
+bool isClassNameValid(char name[100]) {
+  char notAllowedChars[] = "#$^&*_";
+  bool state = true;
+  if (strlen(name) < 5 || strlen(name) > 100) {
+    state = false;
+  }
+  if (state) {
+    for (size_t i = 0; i < strlen(name); i++) {
+      for (size_t j = 0; j < strlen(notAllowedChars); j++) {
+        if (name[i] == notAllowedChars[j]) {
+          state = false;
+          break;
+        }
+      }
+    }
+  }
+  return state;
+}
+
+bool isEmailValid(char email[100]) {
+  bool state = false;
+  for (size_t i = 0; i < strlen(email); i++) {
+    if (email[i] == '@' && i != 0 && i != strlen(email) - 1) {
+      state = true;
+    }
+  }
+  return state;
 }

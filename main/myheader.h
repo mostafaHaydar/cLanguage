@@ -2,6 +2,10 @@
 
 #ifndef MYHEADER_H
 #define MYHEADER_H
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 struct CLASS {
   int id;
@@ -16,7 +20,6 @@ struct STUDENT {
   char email[100];
   char className[50];
 };
-
 void clearInputBuffer();
 int backToMenu(void);
 void createNewClass(struct CLASS *pClasses[100], int *pLastClassId);
@@ -37,4 +40,7 @@ void getDataFromFileStudents(struct STUDENT *pStudent[100],
                              int *pLastStudentId);
 void putDataIntoFileClasses(struct CLASS *pClasses[100]);
 void putDataIntoFileStudents(struct STUDENT *pStudents[100]);
+bool isClassNameValid(char name[100]);
+bool isHummanNameValid(char name[100]);
+bool isEmailValid(char email[100]);
 #endif

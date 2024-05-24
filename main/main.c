@@ -1,11 +1,9 @@
 #include "myFunctions.c"
 #include "myheader.h"
-#include <math.h>
 #include <stdbool.h>
-// #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include <stdio.h>
 int main(void) {
   int lastClassId = 0;
   int *pLastClassId = &lastClassId;
