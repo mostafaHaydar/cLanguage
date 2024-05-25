@@ -3,11 +3,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 void clearInputBuffer() {
   int c;
   while ((c = getchar()) != '\n' && c != EOF)
     ;
 }
+
 int backToMenu(void) {
   int tmpVar;
   printf("\n Si vous pouvez aller "
@@ -15,6 +17,7 @@ int backToMenu(void) {
   scanf("%d", &tmpVar);
   return tmpVar;
 }
+
 void createNewClass(struct CLASS *pClasses[100], int *pLastClassId) {
   system("cls");
   char tmpName[100];
@@ -303,7 +306,8 @@ void createNewStudent(struct STUDENT *pStudent[100], int *pLastStudentId,
           tmpFirstName[len - 1] = '\0';
         }
         if (isHummanNameValid(tmpFirstName)) {
-          strcpy(pStudent[i]->firstName, tmpFirstName);
+          strcpy_s(pStudent[i]->firstName, sizeof(pStudent[i]->firstName),
+                   tmpFirstName);
           isFirstNameValid = true;
         } else {
           system("cls");
@@ -322,10 +326,12 @@ void createNewStudent(struct STUDENT *pStudent[100], int *pLastStudentId,
           tmpLastName[len - 1] = '\0';
         }
 
-        strcpy(pStudent[i]->lastName, tmpLastName);
+        strcpy_s(pStudent[i]->lastName, sizeof(pStudent[i]->lastName),
+                 tmpLastName);
 
         if (isHummanNameValid(tmpLastName)) {
-          strcpy(pStudent[i]->lastName, tmpLastName);
+          strcpy_s(pStudent[i]->lastName, sizeof(pStudent[i]->lastName),
+                   tmpLastName);
           isLastNameValid = true;
         } else {
           system("cls");
@@ -357,7 +363,7 @@ void createNewStudent(struct STUDENT *pStudent[100], int *pLastStudentId,
           tmpEmail[len - 1] = '\0';
         }
         if (isEmailValid(tmpEmail)) {
-          strcpy(pStudent[i]->email, tmpEmail);
+          strcpy_s(pStudent[i]->email, sizeof(pStudent[i]->email), tmpEmail);
           isEmailValidBool = true;
         } else {
           system("cls");
@@ -386,7 +392,8 @@ void createNewStudent(struct STUDENT *pStudent[100], int *pLastStudentId,
           printf("S'il te plaît, entre ta classe::\n\t");
         }
       }
-      strcpy(pStudent[i]->className, tmpClassName);
+      strcpy_s(pStudent[i]->className, sizeof(pStudent[i]->className),
+               tmpClassName);
       break;
       //  end ##################
     }
@@ -424,7 +431,8 @@ void updateStudent(struct STUDENT *pStudent[100]) {
           tmpFirstName[len - 1] = '\0';
         }
         if (isHummanNameValid(tmpFirstName)) {
-          strcpy(pStudent[i]->firstName, tmpFirstName);
+          strcpy_s(pStudent[i]->firstName, sizeof(pStudent[i]->firstName),
+                   tmpFirstName);
           isFirstNameValid = true;
         } else {
           system("cls");
@@ -432,14 +440,6 @@ void updateStudent(struct STUDENT *pStudent[100]) {
                  "court ou trop long.(5,100)\n\t");
         }
       }
-
-      // printf("S'il te plaît, entre le nouveau prénom:\n\t==> ");
-      // fgets(tmpFirstName, sizeof(tmpFirstName), stdin);
-      // len = strlen(tmpFirstName);
-      // if (len > 0 && tmpFirstName[len - 1] == '\n') {
-      //   tmpFirstName[len - 1] = '\0';
-      // }
-      // strcpy(pStudent[i]->firstName, tmpFirstName);
 
       while (!isLastNameValid) {
         printf("S'il te plaît, entre le nouveau nom :\n\t==> ");
@@ -449,10 +449,12 @@ void updateStudent(struct STUDENT *pStudent[100]) {
           tmpLastName[len - 1] = '\0';
         }
 
-        strcpy(pStudent[i]->lastName, tmpLastName);
+        strcpy_s(pStudent[i]->lastName, sizeof(pStudent[i]->lastName),
+                 tmpLastName);
 
         if (isHummanNameValid(tmpLastName)) {
-          strcpy(pStudent[i]->lastName, tmpLastName);
+          strcpy_s(pStudent[i]->lastName, sizeof(pStudent[i]->lastName),
+                   tmpLastName);
           isLastNameValid = true;
         } else {
           system("cls");
@@ -460,15 +462,6 @@ void updateStudent(struct STUDENT *pStudent[100]) {
                  "court ou trop long.(5,100)\n\t");
         }
       }
-
-      // printf("S'il te plaît, entre le nouveau nom :\n\t==> ");
-      // fgets(tmpLastName, sizeof(tmpLastName), stdin);
-      // len = strlen(tmpLastName);
-      // if (len > 0 && tmpLastName[len - 1] == '\n') {
-      //   tmpLastName[len - 1] = '\0';
-      // }
-
-      // strcpy(pStudent[i]->lastName, tmpLastName);
 
       while (!isAgeValid) {
         bool isNumber;
@@ -484,10 +477,6 @@ void updateStudent(struct STUDENT *pStudent[100]) {
         }
         clearInputBuffer();
       }
-
-      // printf("S'il te plaît, entre le nouvel âge:\n\t==> ");
-      // scanf("%d", &pStudent[i]->age);
-      // clearInputBuffer();
       bool isEmailValidBool = false;
       while (!isEmailValidBool) {
         printf("S'il te plaît, entre le nouvel email:\n\t==> ");
@@ -497,7 +486,7 @@ void updateStudent(struct STUDENT *pStudent[100]) {
           tmpEmail[len - 1] = '\0';
         }
         if (isEmailValid(tmpEmail)) {
-          strcpy(pStudent[i]->email, tmpEmail);
+          strcpy_s(pStudent[i]->email, sizeof(pStudent[i]->email), tmpEmail);
           isEmailValidBool = true;
         } else {
           system("cls");
@@ -505,23 +494,14 @@ void updateStudent(struct STUDENT *pStudent[100]) {
         }
       }
 
-      // printf("S'il te plaît, entre le nouvel email:\n\t==> ");
-      // fgets(tmpEmail, sizeof(tmpEmail), stdin);
-      // len = strlen(tmpEmail);
-      // if (len > 0 && tmpEmail[len - 1] == '\n') {
-      //   tmpEmail[len - 1] = '\0';
-      // }
-
-      // strcpy(pStudent[i]->email, tmpEmail);
-
       printf("S'il te plaît, entre la nouvelle classe:\n\t==> ");
       fgets(tmpClassName, sizeof(tmpClassName), stdin);
       len = strlen(tmpClassName);
       if (len > 0 && tmpClassName[len - 1] == '\n') {
         tmpClassName[len - 1] = '\0';
       }
-
-      strcpy(pStudent[i]->className, tmpClassName);
+      strcpy_s(pStudent[i]->className, sizeof(pStudent[i]->className),
+               tmpClassName);
       break;
     }
   }
@@ -654,12 +634,16 @@ void getDataFromFileClasses(struct CLASS *pClasses[100], int *pLastClassId) {
     state = id;
     while (subToken != NULL) {
       switch (state) {
-
+      case 0:
+        // do nothing
+        break;
       case 1:
         number = atoi(subToken);
         pClasses[lastClassId]->id = number;
         break;
-
+      case 2:
+        // do nothing
+        break;
       case 3:
         strcpy_s(pClasses[lastClassId]->name,
                  sizeof(pClasses[lastClassId]->name), subToken);
@@ -720,31 +704,44 @@ void getDataFromFileStudents(struct STUDENT *pStudent[100],
     state = id;
     while (subToken != NULL) {
       switch (state) {
-
+      case 0:
+        // do nothing
+        break;
       case 1:
         number = atoi(subToken);
         pStudent[lastStudentId]->id = number;
         break;
-
+      case 2:
+        // do nothing
+        break;
       case 3:
         strcpy_s(pStudent[lastStudentId]->firstName,
                  sizeof(pStudent[lastStudentId]->firstName), subToken);
         break;
-
+      case 4:
+        // do nothing
+        break;
       case 5:
         strcpy_s(pStudent[lastStudentId]->lastName,
                  sizeof(pStudent[lastStudentId]->lastName), subToken);
+        break;
+      case 6:
+        // do nothing
         break;
       case 7:
         number = atoi(subToken);
         pStudent[lastStudentId]->age = number;
         break;
-
+      case 8:
+        // do nothing
+        break;
       case 9:
         strcpy_s(pStudent[lastStudentId]->email,
                  sizeof(pStudent[lastStudentId]->email), subToken);
         break;
-
+      case 10:
+        // do nothing
+        break;
       case 11:
         strcpy_s(pStudent[lastStudentId]->className,
                  sizeof(pStudent[lastStudentId]->className), subToken);
@@ -752,7 +749,6 @@ void getDataFromFileStudents(struct STUDENT *pStudent[100],
         *pLastStudentId = *pLastStudentId + 1;
         break;
       }
-
       state = state + 1;
       subToken = (char *)strtok_s(NULL, subDelimiter, &inner_saveptr);
     }

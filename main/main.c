@@ -3,7 +3,6 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
 int main(void) {
   int lastClassId = 0;
   int *pLastClassId = &lastClassId;
