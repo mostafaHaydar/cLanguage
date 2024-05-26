@@ -10,6 +10,7 @@
 struct CLASS {
   int id;
   char name[50];
+  int studentsNumber;
 };
 
 struct STUDENT {
@@ -29,10 +30,12 @@ void deleteClass(struct CLASS *pClasses[100], struct STUDENT *pStudent[100],
 void classInformation(struct CLASS *pClasses[100]);
 void allClassesInformation(struct CLASS *pClasses[100]);
 int choseOperation(void);
-void createNewStudent(struct STUDENT *pStudent[100], int *pLastStudentId,
+void createNewStudent(struct STUDENT *pStudent[100],
+                      struct CLASS *pClasses[100], int *pLastStudentId,
                       struct CLASS classes[100]);
-void updateStudent(struct STUDENT *pStudent[100]);
-void deleteStudent(struct STUDENT *pStudent[100], int *pLastStudentId);
+void updateStudent(struct STUDENT *pStudent[100], struct CLASS *pClasses[100]);
+void deleteStudent(struct STUDENT *pStudent[100], struct CLASS *pClasses[100],
+                   int *pLastStudentId);
 void studentInformation(struct STUDENT *pStudents[100]);
 void allStudentsInformation(struct STUDENT *pStudents[100]);
 void getDataFromFileClasses(struct CLASS *pClasses[100], int *pLastClassId);

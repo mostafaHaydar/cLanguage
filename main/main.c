@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
+
 int main(void) {
   int lastClassId = 0;
   int *pLastClassId = &lastClassId;
@@ -13,33 +14,23 @@ int main(void) {
   struct CLASS classes[100];
   struct CLASS *pClasses[100];
 
-  for (int i = 0; i < 100; i++) {
-    pClasses[i] = &classes[i];
-  }
-
-  for (int i = 0; i < 100; i++) {
-    classes[i].id = -1;
-    strcpy_s(classes[i].name, sizeof(classes[i].name), "null");
-  }
-
-  getDataFromFileClasses(pClasses, pLastClassId);
-
-  int tmpClassId;
-
   struct STUDENT students[100];
   struct STUDENT *pStudents[100];
 
-  for (int i = 0; i < 100; i++) {
-    pStudents[i] = &students[i];
+  for (size_t i = 0; i < 100; i++) {
+    pClasses[i] = &classes[i];
+    classes[i].id = -1;
+    classes[i].studentsNumber = 0;
+    strcpy_s(classes[i].name, sizeof(classes[i].name), "null");
   }
 
   for (int i = 0; i < 100; i++) {
+    pStudents[i] = &students[i];
     students[i].id = -1;
   }
 
+  getDataFromFileClasses(pClasses, pLastClassId);
   getDataFromFileStudents(pStudents, pLastStudentId);
-
-  int tmpStudentId;
 
   while (true) {
     int userNumber;
@@ -78,19 +69,19 @@ int main(void) {
       }
       break;
     case 5:
-      createNewStudent(pStudents, pLastStudentId, classes);
+      createNewStudent(pStudents, pClasses, pLastStudentId, classes);
       if (backToMenu() == 0) {
         break;
       }
       break;
     case 6:
-      updateStudent(pStudents);
+      updateStudent(pStudents, pClasses);
       if (backToMenu() == 0) {
         break;
       }
       break;
     case 7:
-      deleteStudent(pStudents, pLastStudentId);
+      deleteStudent(pStudents, pClasses, pLastStudentId);
       if (backToMenu() == 0) {
         break;
       }
@@ -109,6 +100,7 @@ int main(void) {
       break;
     case 10:
       system("cls");
+
       putDataIntoFileClasses(pClasses);
       putDataIntoFileStudents(pStudents);
       exit(1);

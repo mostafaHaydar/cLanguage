@@ -1,1 +1,0 @@
-id:0,name:classe frontend|id:1,name:classe backend|id:2,name:classe full-stack|
