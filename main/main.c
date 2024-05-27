@@ -20,8 +20,8 @@ int main(void) {
   for (size_t i = 0; i < 100; i++) {
     pClasses[i] = &classes[i];
     classes[i].id = -1;
-    classes[i].studentsNumber = 0;
     strcpy_s(classes[i].name, sizeof(classes[i].name), "null");
+    classes[i].studentsNumber = 0;
   }
 
   for (int i = 0; i < 100; i++) {
@@ -42,7 +42,6 @@ int main(void) {
       if (backToMenu() == 0) {
         break;
       }
-
       break;
     case 1:
       updateClass(pClasses, pStudents);

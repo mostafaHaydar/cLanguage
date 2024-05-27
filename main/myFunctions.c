@@ -14,7 +14,7 @@ int backToMenu(void) {
   int tmpVar;
   printf("\n Si vous pouvez aller "
          "vers la page principale, tapez 0 :: ");
-  scanf("%d", &tmpVar);
+  scanf_s("%d", &tmpVar);
   return tmpVar;
 }
 
@@ -74,7 +74,7 @@ void updateClass(struct CLASS *pClasses[100], struct STUDENT *pStudents[100]) {
   printf(
       "Pour modifier les informations d'une classe, il faut d'abord son ID : ");
 
-  scanf("%d", &tmpClassId);
+  scanf_s("%d", &tmpClassId);
 
   clearInputBuffer();
 
@@ -143,7 +143,7 @@ void deleteClass(struct CLASS *pClasses[100], struct STUDENT *pStudent[100],
 
   bool classExists = false;
   int tmpClassId;
-  scanf("%d", &tmpClassId);
+  scanf_s("%d", &tmpClassId);
   clearInputBuffer();
   char tmpClassNameForDeleteStudents[100];
   for (int i = 0; i < 100; i++) {
@@ -199,7 +199,7 @@ void classInformation(struct CLASS *pClasses[100]) {
   printf("Pour voir les informations d'une classe, il faut l'ID de cette "
          "classe : ");
 
-  scanf("%d", &tmpClassId);
+  scanf_s("%d", &tmpClassId);
   clearInputBuffer();
   system("cls");
   bool classExists = false;
@@ -287,7 +287,7 @@ int choseOperation(void) {
   printf("Quelle opération souhaitez-vous effectuer ? : ");
 
   while (true) {
-    isNumber = scanf("%d", &crudOperationNumber);
+    isNumber = scanf_s("%d", &crudOperationNumber);
     clearInputBuffer();
     if (isNumber && crudOperationNumber < 11 && crudOperationNumber >= 0) {
       return crudOperationNumber;
@@ -365,7 +365,7 @@ void createNewStudent(struct STUDENT *pStudent[100],
       while (!isAgeValid) {
         bool isNumber;
         printf("S'il te plaît, entre ton âge:\n\t==> ");
-        isNumber = scanf("%d", &tmpAge);
+        isNumber = scanf_s("%d", &tmpAge);
         if (isNumber && tmpAge > 15 && tmpAge < 25) {
           pStudent[i]->age = tmpAge;
           isAgeValid = true;
@@ -436,7 +436,7 @@ void updateStudent(struct STUDENT *pStudent[100], struct CLASS *pClasses[100]) {
          "de cet étudiant : ");
 
   int tmpStudentId;
-  scanf("%d", &tmpStudentId);
+  scanf_s("%d", &tmpStudentId);
   clearInputBuffer();
   for (int i = 0; i < 100; i++) {
     if (pStudent[i]->id == tmpStudentId) {
@@ -499,7 +499,7 @@ void updateStudent(struct STUDENT *pStudent[100], struct CLASS *pClasses[100]) {
         bool isNumber;
         int tmpAge;
         printf("S'il te plaît, entre le nouvel âge:\n\t==> ");
-        isNumber = scanf("%d", &tmpAge);
+        isNumber = scanf_s("%d", &tmpAge);
         if (isNumber && tmpAge > 15 && tmpAge < 25) {
           pStudent[i]->age = tmpAge;
           isAgeValid = true;
@@ -592,7 +592,7 @@ void deleteStudent(struct STUDENT *pStudent[100], struct CLASS *pClasses[100],
   bool studentExists = false;
   int tmpStudentId;
   char tmpClasseName[100];
-  scanf("%d", &tmpStudentId);
+  scanf_s("%d", &tmpStudentId);
   clearInputBuffer();
   for (int i = 0; i < 99; i++) {
     if (pStudent[i]->id == tmpStudentId) {
@@ -635,7 +635,7 @@ void studentInformation(struct STUDENT *pStudents[100]) {
          "étudiant : ");
 
   int tmpStudentId;
-  scanf("%d", &tmpStudentId);
+  scanf_s("%d", &tmpStudentId);
   clearInputBuffer();
   system("cls");
   for (int i = 0; i < 100; i++) {
