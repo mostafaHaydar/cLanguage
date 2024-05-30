@@ -31,7 +31,7 @@ int main(void) {
   }
 
   getDataFromFileClasses(pClasses, pLastClassId);
-  
+
   getDataFromFileStudents(pStudents, pLastStudentId);
 
   while (true) {

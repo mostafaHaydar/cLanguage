@@ -776,7 +776,7 @@ void getDataFromFileStudents(struct STUDENT *pStudent[100],
   fclose(pFile);
   pFile = NULL;
 
-  char subString[100];
+  char subString[200];
 
   const char delimiter[] = "|";
   const char subDelimiter[] = ":,";
@@ -799,8 +799,8 @@ void getDataFromFileStudents(struct STUDENT *pStudent[100],
     emailVal,
     className,
     classNameVal,
-    date,
-    dateVal,
+    datee,
+    dateeVal
   };
   enum dataElements state = id;
 
@@ -810,17 +810,11 @@ void getDataFromFileStudents(struct STUDENT *pStudent[100],
   while (token != NULL) {
     strcpy_s(subString, sizeof(subString), token);
     char *subToken = (char *)strtok_s(subString, subDelimiter, &inner_saveptr);
-    
+
     state = id;
     while (subToken != NULL) {
-      printf("out switch %s", token);
-      printf("out switch %s", subString);
-      exit(1);
       switch (state) {
-
       case 0:
-        printf("im here state 0");
-        exit(1);
         // do nothing
         break;
       case 1:
@@ -859,23 +853,17 @@ void getDataFromFileStudents(struct STUDENT *pStudent[100],
         // do nothing
         break;
       case 11:
-        printf("im here -1");
-        exit(1);
         strcpy_s(pStudent[lastStudentId]->className,
                  sizeof(pStudent[lastStudentId]->className), subToken);
         break;
       case 12:
         // do nothing
-        printf("im here0");
-        exit(1);
         break;
       case 13:
         strcpy_s(pStudent[lastStudentId]->date,
                  sizeof(pStudent[lastStudentId]->date), subToken);
         lastStudentId = lastStudentId + 1;
         *pLastStudentId = *pLastStudentId + 1;
-        printf("im here2");
-        exit(1);
         break;
       }
       state = state + 1;
@@ -898,14 +886,16 @@ void putDataIntoFileClasses(struct CLASS *pClasses[100]) {
   pFile = NULL;
 
   pFile = fopen("classes.txt", "a");
-  if (pFile != NULL)
-    for (int i = 0; i < 100; i++)
+  if (pFile != NULL) {
+    for (int i = 0; i < 100; i++) {
       if (pClasses[i]->id != -1) {
         fprintf(pFile, "id:%d,", pClasses[i]->id);
         fprintf(pFile, "name:%s,", pClasses[i]->name);
         fprintf(pFile, "studentsNumber:%d,", pClasses[i]->studentsNumber);
         fprintf(pFile, "date:%s|", pClasses[i]->date);
       }
+    }
+  }
 
   fclose(pFile);
   pFile = NULL;
@@ -923,8 +913,8 @@ void putDataIntoFileStudents(struct STUDENT *pStudents[100]) {
   fclose(pFile);
   pFile = NULL;
   pFile = fopen("students.txt", "a");
-  if (pFile != NULL)
-    for (int i = 0; i < 100; i++)
+  if (pFile != NULL) {
+    for (int i = 0; i < 100; i++) {
       if (pStudents[i]->id != -1) {
         fprintf(pFile, "id:%d,", pStudents[i]->id);
         fprintf(pFile, "firstName:%s,", pStudents[i]->firstName);
@@ -934,6 +924,8 @@ void putDataIntoFileStudents(struct STUDENT *pStudents[100]) {
         fprintf(pFile, "className:%s,", pStudents[i]->className);
         fprintf(pFile, "date:%s|", pStudents[i]->date);
       }
+    }
+  }
 
   fclose(pFile);
   pFile = NULL;
@@ -943,8 +935,9 @@ bool isHummanNameValid(char name[100]) {
   char notAllowedChars[] = "123456789#$^&*_#{[]}\\@=+*";
   bool state = true;
 
-  if (strlen(name) < 5 || strlen(name) > 100)
+  if (strlen(name) < 5 || strlen(name) > 100) {
     state = false;
+  }
 
   if (state) {
     for (size_t i = 0; i < strlen(name); i++) {
@@ -962,8 +955,9 @@ bool isHummanNameValid(char name[100]) {
 bool isClassNameValid(char name[100]) {
   char notAllowedChars[] = "#$^&*_#{[]}\\@=+*";
   bool state = true;
-  if (strlen(name) < 5 || strlen(name) > 100)
+  if (strlen(name) < 5 || strlen(name) > 100) {
     state = false;
+  }
   if (state) {
     for (size_t i = 0; i < strlen(name); i++) {
       for (size_t j = 0; j < strlen(notAllowedChars); j++) {
@@ -979,8 +973,10 @@ bool isClassNameValid(char name[100]) {
 
 bool isEmailValid(char email[100]) {
   bool state = false;
-  for (size_t i = 0; i < strlen(email); i++)
-    if (email[i] == '@' && i != 0 && i != strlen(email) - 1)
+  for (size_t i = 0; i < strlen(email); i++) {
+    if (email[i] == '@' && i != 0 && i != strlen(email) - 1) {
       state = true;
+    }
+  }
   return state;
 }
