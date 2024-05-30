@@ -11,6 +11,7 @@ struct CLASS {
   int id;
   char name[50];
   int studentsNumber;
+  char date[100];
 };
 
 struct STUDENT {
@@ -20,6 +21,7 @@ struct STUDENT {
   int age;
   char email[100];
   char className[50];
+  char date[100];
 };
 void clearInputBuffer();
 int backToMenu(void);

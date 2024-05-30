@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include <time.h>
 void clearInputBuffer() {
   int c;
   while ((c = getchar()) != '\n' && c != EOF)
@@ -20,17 +20,24 @@ int backToMenu(void) {
 
 void createNewClass(struct CLASS *pClasses[100], int *pLastClassId) {
   system("cls");
-  char tmpName[100];
-  bool isValid = false;
-  bool alreadyExists = false;
-  while (!isValid) {
 
+  time_t currentTime;
+  time(&currentTime);
+  struct tm *localTime = localtime(&currentTime);
+  char formattedTime[100];
+  strftime(formattedTime, sizeof(formattedTime), "%Y-%m-%d %H-%M-%S",
+           localTime);
+
+  char tmpName[100];
+  bool isValid = false, alreadyExists = false;
+
+  while (!isValid) {
     printf("S'il te plaît, entre le nom de la classe :\n\t==> ");
     fgets(tmpName, sizeof(tmpName), stdin);
     size_t len = strlen(tmpName);
-    if (len > 0 && tmpName[len - 1] == '\n') {
+
+    if (len > 0 && tmpName[len - 1] == '\n')
       tmpName[len - 1] = '\0';
-    }
 
     alreadyExists = false;
 
@@ -55,6 +62,7 @@ void createNewClass(struct CLASS *pClasses[100], int *pLastClassId) {
           pClasses[i]->id = *pLastClassId;
           *pLastClassId = (*pLastClassId) + 1;
           strcpy_s(pClasses[i]->name, sizeof(pClasses[i]->name), tmpName);
+          strcpy_s(pClasses[i]->date, sizeof(pClasses[i]->date), formattedTime);
           isValid = true;
           break;
         }
@@ -73,7 +81,6 @@ void updateClass(struct CLASS *pClasses[100], struct STUDENT *pStudents[100]) {
 
   printf(
       "Pour modifier les informations d'une classe, il faut d'abord son ID : ");
-
   scanf_s("%d", &tmpClassId);
 
   clearInputBuffer();
@@ -155,11 +162,12 @@ void deleteClass(struct CLASS *pClasses[100], struct STUDENT *pStudent[100],
         pClasses[j]->id = pClasses[j + 1]->id;
         strcpy_s(pClasses[j]->name, sizeof(pClasses[j]->name),
                  pClasses[j + 1]->name);
+        strcpy_s(pClasses[j]->date, sizeof(pClasses[j]->date),
+                 pClasses[j + 1]->date);
         pClasses[j]->studentsNumber = pClasses[j + 1]->studentsNumber;
 
         pClasses[99]->id = -1;
       }
-      // *pLastClassId = *pLastClassId - 1;
       for (size_t x = 0; x < 100; x++) {
         if (pStudent[x]->id != -1) {
           if (!strcmp(pStudent[x]->className, tmpClassNameForDeleteStudents)) {
@@ -176,7 +184,6 @@ void deleteClass(struct CLASS *pClasses[100], struct STUDENT *pStudent[100],
                        pStudent[x + 1]->className);
               pStudent[99]->id = -1;
             }
-            // *pLastStudentId = *pLastStudentId - 1;
           } else {
             continue;
           }
@@ -185,12 +192,10 @@ void deleteClass(struct CLASS *pClasses[100], struct STUDENT *pStudent[100],
       break;
     }
   }
-  if (!classExists) {
+  if (!classExists)
     printf("\nIl n'existe pas de classe avec cet identifiant.\n");
-
-  } else {
+  else
     printf("\nL'opération a réussi avec succès.\n");
-  }
 }
 
 void classInformation(struct CLASS *pClasses[100]) {
@@ -210,14 +215,14 @@ void classInformation(struct CLASS *pClasses[100]) {
       printf("id                 :: %d\n", pClasses[i]->id);
       printf("nom de class       :: %s\n", pClasses[i]->name);
       printf("nombre d'élèves    :: %d\n", pClasses[i]->studentsNumber);
+      printf("date               :: %s\n", pClasses[i]->date);
       printf("_______________________________________________________\n\n");
     }
   }
-  if (!classExists) {
+  if (!classExists)
     printf("\nIl n'existe pas de classe avec ce identifiant.\n");
-  } else {
+  else
     printf("\nL'opération a réussi avec succès.\n");
-  }
 }
 
 void allClassesInformation(struct CLASS *pClasses[100]) {
@@ -229,6 +234,7 @@ void allClassesInformation(struct CLASS *pClasses[100]) {
       printf("id                   :: %d\n", pClasses[i]->id);
       printf("nom de class         :: %s\n", pClasses[i]->name);
       printf("nombre d'élèves      :: %d\n", pClasses[i]->studentsNumber);
+      printf("date                 :: %s\n", pClasses[i]->date);
       printf("_______________________________________________________\n\n");
     }
   }
@@ -303,6 +309,14 @@ void createNewStudent(struct STUDENT *pStudent[100],
                       struct CLASS *pClasses[100], int *pLastStudentId,
                       struct CLASS classes[100]) {
   system("cls");
+
+  time_t currentTime;
+  time(&currentTime);
+  struct tm *localTime = localtime(&currentTime);
+  char formattedTime[100];
+  strftime(formattedTime, sizeof(formattedTime), "%Y-%m-%d %H-%M-%S",
+           localTime);
+
   char tmpFirstName[100];
   char tmpLastName[100];
   char tmpEmail[100];
@@ -385,6 +399,7 @@ void createNewStudent(struct STUDENT *pStudent[100],
         }
         if (isEmailValid(tmpEmail)) {
           strcpy_s(pStudent[i]->email, sizeof(pStudent[i]->email), tmpEmail);
+          strcpy_s(pStudent[i]->date, sizeof(pStudent[i]->date), formattedTime);
           isEmailValidBool = true;
         } else {
           system("cls");
@@ -422,7 +437,6 @@ void createNewStudent(struct STUDENT *pStudent[100],
         }
       }
       break;
-      //  end ##################
     }
   }
   printf("\nL'opération a réussi avec succès.\n");
@@ -536,7 +550,6 @@ void updateStudent(struct STUDENT *pStudent[100], struct CLASS *pClasses[100]) {
         if (len > 0 && tmpClassName[len - 1] == '\n') {
           tmpClassName[len - 1] = '\0';
         }
-        // :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
         for (size_t x = 0; x < 100; x++) {
           if (!strcmp(pClasses[x]->name, tmpClassName)) {
@@ -563,7 +576,6 @@ void updateStudent(struct STUDENT *pStudent[100], struct CLASS *pClasses[100]) {
             break;
           }
         }
-        // :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
         if (!isTheSame) {
           system("cls");
@@ -574,12 +586,10 @@ void updateStudent(struct STUDENT *pStudent[100], struct CLASS *pClasses[100]) {
       break;
     }
   }
-  if (!studentExists) {
+  if (!studentExists)
     printf("\nIl n'existe pas d'élève avec cet identifiant.\n");
-
-  } else {
+  else
     printf("\nL'opération a réussi avec succès.\n");
-  }
 }
 
 void deleteStudent(struct STUDENT *pStudent[100], struct CLASS *pClasses[100],
@@ -611,7 +621,6 @@ void deleteStudent(struct STUDENT *pStudent[100], struct CLASS *pClasses[100],
                  pStudent[j + 1]->className);
         pStudent[99]->id = -1;
       }
-      // *pLastStudentId = *pLastStudentId - 1;
       for (size_t j = 0; j < 100; j++) {
         if (!strcmp(tmpClasseName, pClasses[j]->name)) {
           pClasses[j]->studentsNumber = pClasses[j]->studentsNumber - 1;
@@ -621,11 +630,10 @@ void deleteStudent(struct STUDENT *pStudent[100], struct CLASS *pClasses[100],
       break;
     }
   }
-  if (!studentExists) {
+  if (!studentExists)
     printf("\nIl n'existe pas d'élève avec cet identifiant.\n");
-  } else {
+  else
     printf("\nL'opération a réussi avec succès.\n");
-  }
 }
 
 void studentInformation(struct STUDENT *pStudents[100]) {
@@ -638,7 +646,7 @@ void studentInformation(struct STUDENT *pStudents[100]) {
   scanf_s("%d", &tmpStudentId);
   clearInputBuffer();
   system("cls");
-  for (int i = 0; i < 100; i++) {
+  for (int i = 0; i < 100; i++)
     if (pStudents[i]->id == tmpStudentId) {
       studentExists = true;
       printf("_______________________________________________________\n\n");
@@ -648,21 +656,21 @@ void studentInformation(struct STUDENT *pStudents[100]) {
       printf("âge                  :: %d\n", pStudents[i]->age);
       printf("mail                 :: %s\n", pStudents[i]->email);
       printf("classe               :: %s\n", pStudents[i]->className);
+      printf("date                 :: %s\n", pStudents[i]->date);
       printf("_______________________________________________________\n\n");
     }
-  }
-  if (!studentExists) {
-    printf("\nIl n'existe pas d'élève avec cet identifiant.\n");
 
-  } else {
+  if (!studentExists)
+    printf("\nIl n'existe pas d'élève avec cet identifiant.\n");
+  else
     printf("\nL'opération a réussi avec succès.\n");
-  }
 }
 
 void allStudentsInformation(struct STUDENT *pStudents[100]) {
   bool studentExists = false;
   system("cls");
-  for (int i = 0; i < 100; i++) {
+
+  for (int i = 0; i < 100; i++)
     if (pStudents[i]->id != -1) {
       studentExists = true;
       printf("id                   :: %d\n", pStudents[i]->id);
@@ -671,14 +679,14 @@ void allStudentsInformation(struct STUDENT *pStudents[100]) {
       printf("âge                  :: %d\n", pStudents[i]->age);
       printf("mail                 :: %s\n", pStudents[i]->email);
       printf("classe               :: %s\n", pStudents[i]->className);
+      printf("date                 :: %s\n", pStudents[i]->date);
       printf("_______________________________________________________\n\n");
     }
-  }
-  if (!studentExists) {
+
+  if (!studentExists)
     printf("\nIl n'existe pas d'élève dans cette école.\n");
-  } else {
+  else
     printf("\nL'opération a réussi avec succès.\n");
-  }
 }
 
 void getDataFromFileClasses(struct CLASS *pClasses[100], int *pLastClassId) {
@@ -705,7 +713,9 @@ void getDataFromFileClasses(struct CLASS *pClasses[100], int *pLastClassId) {
     name,
     namVal,
     studentsNumber,
-    studentsNumberVal
+    studentsNumberVal,
+    date,
+    dateVal
   };
   enum dataElements state = id;
 
@@ -739,6 +749,13 @@ void getDataFromFileClasses(struct CLASS *pClasses[100], int *pLastClassId) {
       case 5:
         number = atoi(subToken);
         pClasses[lastClassId]->studentsNumber = number;
+        break;
+      case 6:
+        // do nothing
+        break;
+      case 7:
+        strcpy_s(pClasses[lastClassId]->date,
+                 sizeof(pClasses[lastClassId]->date), subToken);
         lastClassId = lastClassId + 1;
         *pLastClassId = *pLastClassId + 1;
         break;
@@ -781,7 +798,9 @@ void getDataFromFileStudents(struct STUDENT *pStudent[100],
     email,
     emailVal,
     className,
-    classNAmeVal
+    classNameVal,
+    date,
+    dateVal,
   };
   enum dataElements state = id;
 
@@ -791,11 +810,17 @@ void getDataFromFileStudents(struct STUDENT *pStudent[100],
   while (token != NULL) {
     strcpy_s(subString, sizeof(subString), token);
     char *subToken = (char *)strtok_s(subString, subDelimiter, &inner_saveptr);
-
+    
     state = id;
     while (subToken != NULL) {
+      printf("out switch %s", token);
+      printf("out switch %s", subString);
+      exit(1);
       switch (state) {
+
       case 0:
+        printf("im here state 0");
+        exit(1);
         // do nothing
         break;
       case 1:
@@ -834,10 +859,23 @@ void getDataFromFileStudents(struct STUDENT *pStudent[100],
         // do nothing
         break;
       case 11:
+        printf("im here -1");
+        exit(1);
         strcpy_s(pStudent[lastStudentId]->className,
                  sizeof(pStudent[lastStudentId]->className), subToken);
+        break;
+      case 12:
+        // do nothing
+        printf("im here0");
+        exit(1);
+        break;
+      case 13:
+        strcpy_s(pStudent[lastStudentId]->date,
+                 sizeof(pStudent[lastStudentId]->date), subToken);
         lastStudentId = lastStudentId + 1;
         *pLastStudentId = *pLastStudentId + 1;
+        printf("im here2");
+        exit(1);
         break;
       }
       state = state + 1;
@@ -860,15 +898,14 @@ void putDataIntoFileClasses(struct CLASS *pClasses[100]) {
   pFile = NULL;
 
   pFile = fopen("classes.txt", "a");
-  if (pFile != NULL) {
-    for (int i = 0; i < 100; i++) {
+  if (pFile != NULL)
+    for (int i = 0; i < 100; i++)
       if (pClasses[i]->id != -1) {
         fprintf(pFile, "id:%d,", pClasses[i]->id);
         fprintf(pFile, "name:%s,", pClasses[i]->name);
-        fprintf(pFile, "studentsNumber:%d|", pClasses[i]->studentsNumber);
+        fprintf(pFile, "studentsNumber:%d,", pClasses[i]->studentsNumber);
+        fprintf(pFile, "date:%s|", pClasses[i]->date);
       }
-    }
-  }
 
   fclose(pFile);
   pFile = NULL;
@@ -882,32 +919,33 @@ void putDataIntoFileStudents(struct STUDENT *pStudents[100]) {
     fclose(pFile);
     pFile = NULL;
   }
+
   fclose(pFile);
   pFile = NULL;
   pFile = fopen("students.txt", "a");
-  if (pFile != NULL) {
-    for (int i = 0; i < 100; i++) {
+  if (pFile != NULL)
+    for (int i = 0; i < 100; i++)
       if (pStudents[i]->id != -1) {
         fprintf(pFile, "id:%d,", pStudents[i]->id);
         fprintf(pFile, "firstName:%s,", pStudents[i]->firstName);
         fprintf(pFile, "lastName:%s,", pStudents[i]->lastName);
         fprintf(pFile, "age:%d,", pStudents[i]->age);
         fprintf(pFile, "email:%s,", pStudents[i]->email);
-        fprintf(pFile, "className:%s|", pStudents[i]->className);
+        fprintf(pFile, "className:%s,", pStudents[i]->className);
+        fprintf(pFile, "date:%s|", pStudents[i]->date);
       }
-    }
-  }
 
   fclose(pFile);
   pFile = NULL;
 }
 
 bool isHummanNameValid(char name[100]) {
-  char notAllowedChars[] = "123456789#$^&*_-";
+  char notAllowedChars[] = "123456789#$^&*_#{[]}\\@=+*";
   bool state = true;
-  if (strlen(name) < 5 || strlen(name) > 100) {
+
+  if (strlen(name) < 5 || strlen(name) > 100)
     state = false;
-  }
+
   if (state) {
     for (size_t i = 0; i < strlen(name); i++) {
       for (size_t j = 0; j < strlen(notAllowedChars); j++) {
@@ -922,11 +960,10 @@ bool isHummanNameValid(char name[100]) {
 }
 
 bool isClassNameValid(char name[100]) {
-  char notAllowedChars[] = "#$^&*_";
+  char notAllowedChars[] = "#$^&*_#{[]}\\@=+*";
   bool state = true;
-  if (strlen(name) < 5 || strlen(name) > 100) {
+  if (strlen(name) < 5 || strlen(name) > 100)
     state = false;
-  }
   if (state) {
     for (size_t i = 0; i < strlen(name); i++) {
       for (size_t j = 0; j < strlen(notAllowedChars); j++) {
@@ -942,10 +979,8 @@ bool isClassNameValid(char name[100]) {
 
 bool isEmailValid(char email[100]) {
   bool state = false;
-  for (size_t i = 0; i < strlen(email); i++) {
-    if (email[i] == '@' && i != 0 && i != strlen(email) - 1) {
+  for (size_t i = 0; i < strlen(email); i++)
+    if (email[i] == '@' && i != 0 && i != strlen(email) - 1)
       state = true;
-    }
-  }
   return state;
 }
