@@ -1,335 +1,322 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SUDUKO</title>
-    <link rel="stylesheet" href="./Global.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Dosis">
-    <link rel="stylesheet" href="./Sudoku.css">
+    <link rel="stylesheet" href="./Global.css" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Dosis"
+    />
+    <link rel="stylesheet" href="./Sudoku.css" />
     <style>
-        * {
-            padding: 0;
-            margin: 0;
-            box-sizing: border-box;
-            text-transform: capitalize;
-            direction: rtl;
-        }
+      * {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+        text-transform: capitalize;
+        direction: rtl;
+      }
 
-        input:focus {
-            outline: none;
-        }
+      input:focus {
+        outline: none;
+      }
 
-        * {
-            font-family: 'Dosis' !important;
-        }
+      * {
+        font-family: "Dosis" !important;
+      }
 
-        a {
-            text-decoration: none;
-            color: #fff;
-        }
+      a {
+        text-decoration: none;
+        color: #fff;
+      }
 
-        body {
-            overflow-x: hidden;
-        }
+      body {
+        overflow-x: hidden;
+      }
 
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
 
-        ::-webkit-scrollbar-track {
-            border-radius: 10px;
-        }
+      ::-webkit-scrollbar-track {
+        border-radius: 10px;
+      }
 
-        ::-webkit-scrollbar-thumb {
-            background: rgb(155, 155, 155);
-            border-radius: 10px;
-        }
+      ::-webkit-scrollbar-thumb {
+        background: rgb(155, 155, 155);
+        border-radius: 10px;
+      }
 
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgb(94, 94, 94);
-            border-radius: 10px;
-        }
+      ::-webkit-scrollbar-thumb:hover {
+        background: rgb(94, 94, 94);
+        border-radius: 10px;
+      }
 
-        body {
-            background-color: #EEF3FC;
-        }
+      body {
+        background-color: #eef3fc;
+      }
 
-        .container {
-            width: 360px;
-            height: 360px;
-            margin-top: 80px;
-            margin-right: 50%;
-            transform: translate(50%);
-            position: relative;
-            display: flex;
-            flex-wrap: wrap;
-            direction: ltr;
-            box-shadow: 0px 0px 5px 2px rgb(219, 219, 219);
-            border-radius: 3px;
-        }
+      .container {
+        width: 360px;
+        height: 360px;
+        margin-top: 80px;
+        margin-right: 50%;
+        transform: translate(50%);
+        position: relative;
+        display: flex;
+        flex-wrap: wrap;
+        direction: ltr;
+        box-shadow: 0px 0px 5px 2px rgb(219, 219, 219);
+        border-radius: 3px;
+      }
 
-        input {
-            border-radius: 3px;
-            margin: 0;
-            width: 40px;
-            height: 40px;
-            border: 1px rgb(187, 187, 187) solid;
-            padding: 0;
-            color: #333;
-            padding-right: 11px;
-            overflow: hidden;
-            font-size: 25px;
-        }
+      input {
+        border-radius: 3px;
+        margin: 0;
+        width: 40px;
+        height: 40px;
+        border: 1px rgb(187, 187, 187) solid;
+        padding: 0;
+        color: #333;
+        padding-right: 11px;
+        overflow: hidden;
+        font-size: 25px;
+      }
 
-        button {
-            width: 360px;
-            height: 50px;
-            border-radius: 3px;
-            /* border: 1px rgb(187, 187, 187) solid; */
-            margin-top: 10px;
-            margin-right: 50%;
-            transform: translate(50%);
-            font-size: 26px;
-            font-weight: 600;
-            color: #555;
-            cursor: pointer;
-            background-color: #ddd;
-            background: #d2e1fa;
-            border: 0;
-            color: rgb(64, 167, 252);
-            box-shadow: 0px 0px 5px 2px rgb(172, 172, 172);
-        }
+      button {
+        width: 360px;
+        height: 50px;
+        border-radius: 3px;
+        /* border: 1px rgb(187, 187, 187) solid; */
+        margin-top: 10px;
+        margin-right: 50%;
+        transform: translate(50%);
+        font-size: 26px;
+        font-weight: 600;
+        color: #555;
+        cursor: pointer;
+        background-color: #ddd;
+        background: #d2e1fa;
+        border: 0;
+        color: rgb(64, 167, 252);
+        box-shadow: 0px 0px 5px 2px rgb(172, 172, 172);
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <div class="container">
-        <input type="text" id="0" value="0" style="background:#ddd">
-        <input type="text" id="1" value="0" style="background:#ddd">
-        <input type="text" id="2" value="0" style="background:#ddd">
-        <input type="text" id="3" value="0" style="background:#EEF3FC">
-        <input type="text" id="4" value="0" style="background:#EEF3FC">
-        <input type="text" id="5" value="0" style="background:#EEF3FC">
-        <input type="text" id="6" value="0" style="background:#ddd">
-        <input type="text" id="7" value="0" style="background:#ddd">
-        <input type="text" id="8" value="0" style="background:#ddd">
-        <input type="text" id="9" value="0" style="background:#ddd">
-        <input type="text" id="10" value="0" style="background:#ddd">
-        <input type="text" id="11" value="0" style="background:#ddd">
-        <input type="text" id="12" value="0" style="background:#EEF3FC">
-        <input type="text" id="13" value="0" style="background:#EEF3FC">
-        <input type="text" id="14" value="0" style="background:#EEF3FC">
-        <input type="text" id="15" value="0" style="background:#ddd">
-        <input type="text" id="16" value="0" style="background:#ddd">
-        <input type="text" id="17" value="0" style="background:#ddd">
-        <input type="text" id="18" value="0" style="background:#ddd">
-        <input type="text" id="19" value="0" style="background:#ddd">
-        <input type="text" id="20" value="0" style="background:#ddd">
-        <input type="text" id="21" value="0" style="background:#EEF3FC">
-        <input type="text" id="22" value="0" style="background:#EEF3FC">
-        <input type="text" id="23" value="0" style="background:#EEF3FC">
-        <input type="text" id="24" value="0" style="background:#ddd">
-        <input type="text" id="25" value="0" style="background:#ddd">
-        <input type="text" id="26" value="0" style="background:#ddd">
-        <input type="text" id="27" value="0" style="background:#EEF3FC">
-        <input type="text" id="28" value="0" style="background:#EEF3FC">
-        <input type="text" id="29" value="0" style="background:#EEF3FC">
-        <input type="text" id="30" value="0" style="background:#ddd">
-        <input type="text" id="31" value="0" style="background:#ddd">
-        <input type="text" id="32" value="0" style="background:#ddd">
-        <input type="text" id="33" value="0" style="background:#EEF3FC">
-        <input type="text" id="34" value="0" style="background:#EEF3FC">
-        <input type="text" id="35" value="0" style="background:#EEF3FC">
-        <input type="text" id="36" value="0" style="background:#EEF3FC">
-        <input type="text" id="37" value="0" style="background:#EEF3FC">
-        <input type="text" id="38" value="0" style="background:#EEF3FC">
-        <input type="text" id="39" value="0" style="background:#ddd">
-        <input type="text" id="40" value="0" style="background:#ddd">
-        <input type="text" id="41" value="0" style="background:#ddd">
-        <input type="text" id="42" value="0" style="background:#EEF3FC">
-        <input type="text" id="43" value="0" style="background:#EEF3FC">
-        <input type="text" id="44" value="0" style="background:#EEF3FC">
-        <input type="text" id="45" value="0" style="background:#EEF3FC">
-        <input type="text" id="46" value="0" style="background:#EEF3FC">
-        <input type="text" id="47" value="0" style="background:#EEF3FC">
-        <input type="text" id="48" value="0" style="background:#ddd">
-        <input type="text" id="49" value="0" style="background:#ddd">
-        <input type="text" id="50" value="0" style="background:#ddd">
-        <input type="text" id="51" value="0" style="background:#EEF3FC">
-        <input type="text" id="52" value="0" style="background:#EEF3FC">
-        <input type="text" id="53" value="0" style="background:#EEF3FC">
-        <input type="text" id="54" value="0" style="background:#ddd">
-        <input type="text" id="55" value="0" style="background:#ddd">
-        <input type="text" id="56" value="0" style="background:#ddd">
-        <input type="text" id="57" value="0" style="background:#EEF3FC">
-        <input type="text" id="58" value="0" style="background:#EEF3FC">
-        <input type="text" id="59" value="0" style="background:#EEF3FC">
-        <input type="text" id="60" value="0" style="background:#ddd">
-        <input type="text" id="61" value="0" style="background:#ddd">
-        <input type="text" id="62" value="0" style="background:#ddd">
-        <input type="text" id="63" value="0" style="background:#ddd">
-        <input type="text" id="64" value="0" style="background:#ddd">
-        <input type="text" id="65" value="0" style="background:#ddd">
-        <input type="text" id="66" value="0" style="background:#EEF3FC">
-        <input type="text" id="67" value="0" style="background:#EEF3FC">
-        <input type="text" id="68" value="0" style="background:#EEF3FC">
-        <input type="text" id="69" value="0" style="background:#ddd">
-        <input type="text" id="70" value="0" style="background:#ddd">
-        <input type="text" id="71" value="0" style="background:#ddd">
-        <input type="text" id="72" value="0" style="background:#ddd">
-        <input type="text" id="73" value="0" style="background:#ddd">
-        <input type="text" id="74" value="0" style="background:#ddd">
-        <input type="text" id="75" value="0" style="background:#EEF3FC">
-        <input type="text" id="76" value="0" style="background:#EEF3FC">
-        <input type="text" id="77" value="0" style="background:#EEF3FC">
-        <input type="text" id="78" value="0" style="background:#ddd">
-        <input type="text" id="79" value="0" style="background:#ddd">
-        <input type="text" id="80" value="0" style="background:#ddd">
+      <input type="text" id="0" value="0" style="background: #ddd" />
+      <input type="text" id="1" value="0" style="background: #ddd" />
+      <input type="text" id="2" value="0" style="background: #ddd" />
+      <input type="text" id="3" value="0" style="background: #eef3fc" />
+      <input type="text" id="4" value="0" style="background: #eef3fc" />
+      <input type="text" id="5" value="0" style="background: #eef3fc" />
+      <input type="text" id="6" value="0" style="background: #ddd" />
+      <input type="text" id="7" value="0" style="background: #ddd" />
+      <input type="text" id="8" value="0" style="background: #ddd" />
+      <input type="text" id="9" value="0" style="background: #ddd" />
+      <input type="text" id="10" value="0" style="background: #ddd" />
+      <input type="text" id="11" value="0" style="background: #ddd" />
+      <input type="text" id="12" value="0" style="background: #eef3fc" />
+      <input type="text" id="13" value="0" style="background: #eef3fc" />
+      <input type="text" id="14" value="0" style="background: #eef3fc" />
+      <input type="text" id="15" value="0" style="background: #ddd" />
+      <input type="text" id="16" value="0" style="background: #ddd" />
+      <input type="text" id="17" value="0" style="background: #ddd" />
+      <input type="text" id="18" value="0" style="background: #ddd" />
+      <input type="text" id="19" value="0" style="background: #ddd" />
+      <input type="text" id="20" value="0" style="background: #ddd" />
+      <input type="text" id="21" value="0" style="background: #eef3fc" />
+      <input type="text" id="22" value="0" style="background: #eef3fc" />
+      <input type="text" id="23" value="0" style="background: #eef3fc" />
+      <input type="text" id="24" value="0" style="background: #ddd" />
+      <input type="text" id="25" value="0" style="background: #ddd" />
+      <input type="text" id="26" value="0" style="background: #ddd" />
+      <input type="text" id="27" value="0" style="background: #eef3fc" />
+      <input type="text" id="28" value="0" style="background: #eef3fc" />
+      <input type="text" id="29" value="0" style="background: #eef3fc" />
+      <input type="text" id="30" value="0" style="background: #ddd" />
+      <input type="text" id="31" value="0" style="background: #ddd" />
+      <input type="text" id="32" value="0" style="background: #ddd" />
+      <input type="text" id="33" value="0" style="background: #eef3fc" />
+      <input type="text" id="34" value="0" style="background: #eef3fc" />
+      <input type="text" id="35" value="0" style="background: #eef3fc" />
+      <input type="text" id="36" value="0" style="background: #eef3fc" />
+      <input type="text" id="37" value="0" style="background: #eef3fc" />
+      <input type="text" id="38" value="0" style="background: #eef3fc" />
+      <input type="text" id="39" value="0" style="background: #ddd" />
+      <input type="text" id="40" value="0" style="background: #ddd" />
+      <input type="text" id="41" value="0" style="background: #ddd" />
+      <input type="text" id="42" value="0" style="background: #eef3fc" />
+      <input type="text" id="43" value="0" style="background: #eef3fc" />
+      <input type="text" id="44" value="0" style="background: #eef3fc" />
+      <input type="text" id="45" value="0" style="background: #eef3fc" />
+      <input type="text" id="46" value="0" style="background: #eef3fc" />
+      <input type="text" id="47" value="0" style="background: #eef3fc" />
+      <input type="text" id="48" value="0" style="background: #ddd" />
+      <input type="text" id="49" value="0" style="background: #ddd" />
+      <input type="text" id="50" value="0" style="background: #ddd" />
+      <input type="text" id="51" value="0" style="background: #eef3fc" />
+      <input type="text" id="52" value="0" style="background: #eef3fc" />
+      <input type="text" id="53" value="0" style="background: #eef3fc" />
+      <input type="text" id="54" value="0" style="background: #ddd" />
+      <input type="text" id="55" value="0" style="background: #ddd" />
+      <input type="text" id="56" value="0" style="background: #ddd" />
+      <input type="text" id="57" value="0" style="background: #eef3fc" />
+      <input type="text" id="58" value="0" style="background: #eef3fc" />
+      <input type="text" id="59" value="0" style="background: #eef3fc" />
+      <input type="text" id="60" value="0" style="background: #ddd" />
+      <input type="text" id="61" value="0" style="background: #ddd" />
+      <input type="text" id="62" value="0" style="background: #ddd" />
+      <input type="text" id="63" value="0" style="background: #ddd" />
+      <input type="text" id="64" value="0" style="background: #ddd" />
+      <input type="text" id="65" value="0" style="background: #ddd" />
+      <input type="text" id="66" value="0" style="background: #eef3fc" />
+      <input type="text" id="67" value="0" style="background: #eef3fc" />
+      <input type="text" id="68" value="0" style="background: #eef3fc" />
+      <input type="text" id="69" value="0" style="background: #ddd" />
+      <input type="text" id="70" value="0" style="background: #ddd" />
+      <input type="text" id="71" value="0" style="background: #ddd" />
+      <input type="text" id="72" value="0" style="background: #ddd" />
+      <input type="text" id="73" value="0" style="background: #ddd" />
+      <input type="text" id="74" value="0" style="background: #ddd" />
+      <input type="text" id="75" value="0" style="background: #eef3fc" />
+      <input type="text" id="76" value="0" style="background: #eef3fc" />
+      <input type="text" id="77" value="0" style="background: #eef3fc" />
+      <input type="text" id="78" value="0" style="background: #ddd" />
+      <input type="text" id="79" value="0" style="background: #ddd" />
+      <input type="text" id="80" value="0" style="background: #ddd" />
     </div>
     <button onclick="planArray()">complete</button>
     <script>
+      var sudoku = [
+          [5, 3, 0, 0, 7, 0, 0, 0, 0],
+          [6, 0, 0, 1, 9, 5, 0, 0, 0],
+          [0, 9, 8, 0, 0, 0, 0, 6, 0],
+          [8, 0, 0, 0, 6, 0, 0, 0, 3],
+          [4, 0, 0, 8, 0, 3, 0, 0, 1],
+          [7, 0, 0, 0, 2, 0, 0, 0, 6],
+          [0, 6, 0, 0, 0, 0, 2, 8, 0],
+          [0, 0, 0, 4, 1, 9, 0, 0, 5],
+          [0, 0, 0, 0, 8, 0, 0, 7, 9]
+      ];
 
-        // var sudoku = [
-        //     [5, 3, 0, 0, 7, 0, 0, 0, 0],
-        //     [6, 0, 0, 1, 9, 5, 0, 0, 0],
-        //     [0, 9, 8, 0, 0, 0, 0, 6, 0],
-        //     [8, 0, 0, 0, 6, 0, 0, 0, 3],
-        //     [4, 0, 0, 8, 0, 3, 0, 0, 1],
-        //     [7, 0, 0, 0, 2, 0, 0, 0, 6],
-        //     [0, 6, 0, 0, 0, 0, 2, 8, 0],
-        //     [0, 0, 0, 4, 1, 9, 0, 0, 5],
-        //     [0, 0, 0, 0, 8, 0, 0, 7, 9]
-        // ];
+      var sudoku = [
+        [1, 0, 0, 4, 8, 9, 0, 0, 6],
+        [7, 3, 0, 0, 0, 0, 0, 4, 0],
+        [0, 0, 0, 0, 0, 1, 2, 9, 5],
+        [0, 0, 7, 1, 2, 0, 6, 0, 0],
+        [5, 0, 0, 7, 0, 3, 0, 0, 8],
+        [0, 0, 6, 0, 9, 5, 7, 0, 0],
+        [9, 1, 4, 6, 0, 0, 0, 0, 0],
+        [0, 2, 0, 0, 0, 0, 0, 6, 7],
+        [6, 0, 0, 5, 1, 2, 0, 0, 3],
+      ];
 
-        var sudoku = [
-            [1, 0, 0, 4, 8, 9, 0, 0, 6],
-            [7, 3, 0, 0, 0, 0, 0, 4, 0],
-            [0, 0, 0, 0, 0, 1, 2, 9, 5],
-            [0, 0, 7, 1, 2, 0, 6, 0, 0],
-            [5, 0, 0, 7, 0, 3, 0, 0, 8],
-            [0, 0, 6, 0, 9, 5, 7, 0, 0],
-            [9, 1, 4, 6, 0, 0, 0, 0, 0],
-            [0, 2, 0, 0, 0, 0, 0, 6, 7],
-            [6, 0, 0, 5, 1, 2, 0, 0, 3]
-        ];
+      // return where is the index exists nine block in a sudodu game
+      function positionInNineBlocks(sudokuArray, place, element) {
+        var position = [3, 3];
 
+        // if (3 <= place[0]) 6 <= place[0] ? pos[0] = 9 : pos[0] = 6;
 
-        // return where is the index exists nine block in a sudodu game 
-        function positionInNineBlocks(sudokuArray, place, element) {
-
-            var position = [3, 3];
-
-
-
-            // if (3 <= place[0]) 6 <= place[0] ? pos[0] = 9 : pos[0] = 6;
-
-            if (3 <= place[0]) {
-
-                if (6 <= place[0]) {
-                    position[0] = 9
-                }
-                else {
-                    position[0] = 6
-                }
-            }
-
-            if (3 <= place[1]) {
-                if (6 <= place[1]) {
-                    position[1] = 9
-                } else {
-                    position[1] = 6
-                }
-            }
-
-
-            // if (3 <= place[1]) 6 <= place[1] ? pos[1] = 9 : pos[1] = 6;
-
-
-            for (let i = position[0] - 3; i < position[0]; i++)
-                for (let j = position[1] - 3; j < position[1]; j++)
-                    if (sudokuArray[i][j] == element) return true;
-
-
-            for (let i = 0; i < sudokuArray[place[0]].length; i++)
-                if (element == sudokuArray[place[0]][i]) return true;
-
-
-            for (let i = 0; i < sudokuArray.length; i++)
-                if (element == sudokuArray[i][place[1]]) return true;
-
-
+        if (3 <= place[0]) {
+          if (6 <= place[0]) {
+            position[0] = 9;
+          } else {
+            position[0] = 6;
+          }
         }
 
-        function checkTreeTree(pos, element) {
-            for (let i = pos[0]; i < pos[0] + 3; i++)
-                for (let j = pos[1]; j < pos[1] + 3; j++)
-                    if (sudoku[i][j] === element) return true;
+        if (3 <= place[1]) {
+          if (6 <= place[1]) {
+            position[1] = 9;
+          } else {
+            position[1] = 6;
+          }
         }
 
-        function checkOpoNumber(pos, element) {
-            var count = 0;
-            if (!checkTreeTree(pos, element))
-                for (let i = pos[0]; i < pos[0] + 3; i++)
-                    for (let j = pos[1]; j < pos[1] + 3; j++)
-                        if (sudoku[i][j] === 0 && !inMatrix(sudoku, [i, j], element))
-                            count++;
+        // if (3 <= place[1]) 6 <= place[1] ? pos[1] = 9 : pos[1] = 6;
 
-            return count;
-        }
+        for (let i = position[0] - 3; i < position[0]; i++)
+          for (let j = position[1] - 3; j < position[1]; j++)
+            if (sudokuArray[i][j] == element) return true;
 
-        function zeroIn() {
-            for (let i = 0; i < 9; i++)
-                for (let j = 0; j < 9; j++)
-                    if (sudoku[i][j] === 0) return true;
-        }
+        for (let i = 0; i < sudokuArray[place[0]].length; i++)
+          if (element == sudokuArray[place[0]][i]) return true;
 
-        function startSelv() {
-            var pos = [0, 0];
-            var element;
-            var count = 0
-            while (zeroIn() && count < 55) {
-                var element = Math.floor(Math.random() * 10);
-                if (element == 0 || element == 10) element = 5
-                for (let x = 0; x < 9; x++) {
-                    if (checkOpoNumber(pos, element) == 1) {
-                        for (let i = pos[0]; i < pos[0] + 3; i++) {
-                            for (let j = pos[1]; j < pos[1] + 3; j++) {
-                                if (!inMatrix(sudoku, [i, j], element) && sudoku[i][j] == 0) {
-                                    sudoku[i][j] = element;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    if (pos[1] != 6) {
-                        pos[1] = pos[1] + 3
-                    } else {
-                        pos[1] = 0;
-                        (pos[0] != 6) ? pos[0] = pos[0] + 3 : pos[0] = pos[0];
-                    }
-                }
-                pos = [0, 0];
+        for (let i = 0; i < sudokuArray.length; i++)
+          if (element == sudokuArray[i][place[1]]) return true;
+      }
+
+      function checkTreeTree(pos, element) {
+        for (let i = pos[0]; i < pos[0] + 3; i++)
+          for (let j = pos[1]; j < pos[1] + 3; j++)
+            if (sudoku[i][j] === element) return true;
+      }
+
+      function checkOpoNumber(pos, element) {
+        var count = 0;
+        if (!checkTreeTree(pos, element))
+          for (let i = pos[0]; i < pos[0] + 3; i++)
+            for (let j = pos[1]; j < pos[1] + 3; j++)
+              if (sudoku[i][j] === 0 && !inMatrix(sudoku, [i, j], element))
                 count++;
-            }
-            var count = 0;
-            for (let i = 0; i < 9; i++) {
-                for (let j = 0; j < 9; j++) {
-                    document.getElementById(count).value = sudoku[i][j];
-                    count++;
+
+        return count;
+      }
+
+      function zeroIn() {
+        for (let i = 0; i < 9; i++)
+          for (let j = 0; j < 9; j++) if (sudoku[i][j] === 0) return true;
+      }
+
+      function startSelv() {
+        var pos = [0, 0];
+        var element;
+        var count = 0;
+        while (zeroIn() && count < 55) {
+          var element = Math.floor(Math.random() * 10);
+          if (element == 0 || element == 10) element = 5;
+          for (let x = 0; x < 9; x++) {
+            if (checkOpoNumber(pos, element) == 1) {
+              for (let i = pos[0]; i < pos[0] + 3; i++) {
+                for (let j = pos[1]; j < pos[1] + 3; j++) {
+                  if (!inMatrix(sudoku, [i, j], element) && sudoku[i][j] == 0) {
+                    sudoku[i][j] = element;
+                    break;
+                  }
                 }
+              }
             }
+            if (pos[1] != 6) {
+              pos[1] = pos[1] + 3;
+            } else {
+              pos[1] = 0;
+              pos[0] != 6 ? (pos[0] = pos[0] + 3) : (pos[0] = pos[0]);
+            }
+          }
+          pos = [0, 0];
+          count++;
         }
+        var count = 0;
+        for (let i = 0; i < 9; i++) {
+          for (let j = 0; j < 9; j++) {
+            document.getElementById(count).value = sudoku[i][j];
+            count++;
+          }
+        }
+      }
 
-        function planArray() {
-            sudoku.forEach(e => {
-                console.log(e[0], e[1], e[2], e[3], e[4], e[5], e[6], e[7], e[8]);
-            });
-            startSelv();
-        }
+      function planArray() {
+        sudoku.forEach((e) => {
+          console.log(e[0], e[1], e[2], e[3], e[4], e[5], e[6], e[7], e[8]);
+        });
+        startSelv();
+      }
     </script>
-</body>
-
+  </body>
 </html>
