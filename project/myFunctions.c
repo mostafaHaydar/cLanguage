@@ -251,14 +251,28 @@ int choseOperation(void) {
   int isNumber;
   system("cls");
 
+  printf("####################################################"
+         "######################\n");
   printf("################ Bonjour, dans mon système scolaire "
-         "#####################\n\n");
+         "######################\n");
+  printf("####################################################"
+         "######################\n");
+  printf(
+      "#                                                                      "
+      "  #\n");
+  printf(
+      "#                                                                      "
+      "  #\n");
   printf("#    ##########                                                      "
          "    #\n");
   printf("#    # classe #                                                      "
          "    #\n");
+
   printf("#    ##########                                                      "
-         "    #\n\n");
+         "    #\n");
+  printf(
+      "#                                                                      "
+      "  #\n");
   printf("#\t:: cC ==> 0 :: pour ajouter une classe                           "
          "#\n");
   printf("#\t:: uC ==> 1 :: pour modifier les informations d'une classe       "
@@ -268,13 +282,19 @@ int choseOperation(void) {
   printf("#\t:: rC ==> 3 :: pour voir les informations d'une classe           "
          "#\n");
   printf("#\t:: aC ==> 4 :: pour voir les informations de toutes les classes  "
-         "#\n\n");
+         "#\n");
+  printf(
+      "#                                                                      "
+      "  #\n");
   printf("#    ############                                                    "
          "    #\n");
   printf("#    # étudiant #                                                    "
          "    #\n");
   printf("#    ############                                                    "
-         "    #\n\n");
+         "    #\n");
+  printf(
+      "#                                                                      "
+      "  #\n");
   printf("#\t:: cS ==> 5 :: Pour ajouter un étudiant                          "
          "#\n");
   printf("#\t:: uS ==> 6 :: pour modifier les informations d'un étudiant      "
@@ -284,11 +304,24 @@ int choseOperation(void) {
   printf("#\t:: rS ==> 8 :: pour voir les informations d'un étudiant          "
          "#\n");
   printf("#\t:: aS ==> 9 :: pour voir les informations de tous les étudiant   "
-         "#\n\n");
+         "#\n");
+  printf(
+      "#                                                                      "
+      "  #\n");
+  printf(
+      "#                                                                      "
+      "  #\n");
   printf("#\t:: exit ==> 10 :: pour sortir                                    "
-         "#\n\n");
-  printf("#####################################################################"
-         "####\n\n");
+         "#\n");
+  printf(
+      "#                                                                      "
+      "  #\n");
+  printf(
+      "#                                                                      "
+      "  #\n");
+  printf(
+      "######################################################################"
+      "####\n\n\t");
 
   printf("Quelle opération souhaitez-vous effectuer ? : ");
 
@@ -682,7 +715,6 @@ void allStudentsInformation(struct STUDENT *pStudents[100]) {
       printf("date                 :: %s\n", pStudents[i]->date);
       printf("_______________________________________________________\n\n");
     }
-
   if (!studentExists)
     printf("\nIl n'existe pas d'élève dans cette école.\n");
   else
