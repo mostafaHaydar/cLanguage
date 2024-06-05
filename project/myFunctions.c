@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+
 void clearInputBuffer() {
   int c;
   while ((c = getchar()) != '\n' && c != EOF)
@@ -18,8 +19,19 @@ int backToMenu(void) {
   return tmpVar;
 }
 
-void createNewClass(struct CLASS *pClasses[100], int *pLastClassId) {
+void createNewClass(int *pLastClassId) {
   system("cls");
+
+  current =
+      (struct CLASS_LINKED_LISTS *)malloc(sizeof(struct CLASS_LINKED_LISTS));
+
+  if (first == NULL) {
+    first = current;
+  }
+
+  if (previous != NULL) {
+    previous->next = current;
+  }
 
   time_t currentTime;
   time(&currentTime);
@@ -41,13 +53,17 @@ void createNewClass(struct CLASS *pClasses[100], int *pLastClassId) {
 
     alreadyExists = false;
 
-    for (size_t j = 0; j < 100; j++) {
-      if (!strcmp(pClasses[j]->name, tmpName)) {
+    // check class name if alreay used by another class
+
+    struct CLASS_LINKED_LISTS *tmpCurrent = first;
+    while (tmpCurrent != NULL) {
+      if (!strcmp(tmpCurrent->name, tmpName)) {
         system("cls");
         printf("Ce nom de classe est déjà utilisé dans une autre classe.\n\t");
         alreadyExists = true;
         break;
       }
+      tmpCurrent = tmpCurrent->next;
     }
 
     if (!isClassNameValid(tmpName)) {
@@ -57,24 +73,26 @@ void createNewClass(struct CLASS *pClasses[100], int *pLastClassId) {
     }
 
     if (!alreadyExists && isClassNameValid(tmpName)) {
-      for (int i = 0; i < 100; i++) {
-        if (pClasses[i]->id == -1) {
-          pClasses[i]->id = *pLastClassId;
-          *pLastClassId = (*pLastClassId) + 1;
-          strcpy_s(pClasses[i]->name, sizeof(pClasses[i]->name), tmpName);
-          strcpy_s(pClasses[i]->date, sizeof(pClasses[i]->date), formattedTime);
-          isValid = true;
-          break;
-        }
-      }
+      current->id = *pLastClassId;
+
+      *pLastClassId = (*pLastClassId) + 1;
+      strcpy_s(current->name, sizeof(current->name), tmpName);
+      current->studentsNumber = 0;
+      strcpy_s(current->date, sizeof(current->date), formattedTime);
+      isValid = true;
+      break;
     }
   }
+  current->next = NULL;
+  previous = current;
   printf("\nL'opération a réussi avec succès.\n");
 }
 
-void updateClass(struct CLASS *pClasses[100], struct STUDENT *pStudents[100]) {
+void updateClass() {
 
   system("cls");
+
+  current = first;
 
   int tmpClassId;
   bool classExists = false;
@@ -84,16 +102,16 @@ void updateClass(struct CLASS *pClasses[100], struct STUDENT *pStudents[100]) {
   scanf_s("%d", &tmpClassId);
 
   clearInputBuffer();
-
-  for (int i = 0; i < 100; i++) {
-    if (pClasses[i]->id == tmpClassId) {
+  while (current != NULL) {
+    if (current->id == tmpClassId) {
       classExists = true;
       char tmpClassNameForUpdateStudents[100];
       strcpy_s(tmpClassNameForUpdateStudents,
-               sizeof(tmpClassNameForUpdateStudents), pClasses[i]->name);
+               sizeof(tmpClassNameForUpdateStudents), current->name);
       char tmpName[100];
       bool isClassNameValidBool = false;
       while (!isClassNameValidBool) {
+
         printf("S'il te plaît, entre le nouveau nom de la classe :\n\t==> ");
         fgets(tmpName, sizeof(tmpName), stdin);
         size_t len = strlen(tmpName);
@@ -101,15 +119,21 @@ void updateClass(struct CLASS *pClasses[100], struct STUDENT *pStudents[100]) {
           tmpName[len - 1] = '\0';
         }
         bool isExists = false;
-        for (size_t j = 0; j < 100; j++) {
-          if (!strcmp(pClasses[j]->name, tmpName) && j != tmpClassId) {
+
+        // check class name if alreay used by another class
+
+        struct CLASS_LINKED_LISTS *tmpCurrent = first;
+        while (tmpCurrent != NULL) {
+          if (!strcmp(tmpCurrent->name, tmpName)) {
             system("cls");
             printf(
                 "Ce nom de classe est déjà utilisé dans une autre classe.\n\t");
             isExists = true;
             break;
           }
+          tmpCurrent = tmpCurrent->next;
         }
+
         if (!isExists) {
           if (!isClassNameValid(tmpName)) {
             system("cls");
@@ -122,19 +146,22 @@ void updateClass(struct CLASS *pClasses[100], struct STUDENT *pStudents[100]) {
         }
       }
 
-      strcpy_s(pClasses[i]->name, sizeof(pClasses[i]->name), tmpName);
-      for (size_t x = 0; x < 100; x++) {
-        if (pStudents[x]->id != -1) {
-          if (!strcmp(pStudents[x]->className, tmpClassNameForUpdateStudents)) {
-            strcpy_s(pStudents[x]->className, sizeof(pStudents[x]->className),
-                     pClasses[x]->name);
-          } else {
-            continue;
-          }
+      strcpy_s(current->name, sizeof(current->name), tmpName);
+
+      current_s = first_s;
+      while (current_s != NULL) {
+        if (!strcmp(current_s->className, tmpClassNameForUpdateStudents)) {
+          strcpy_s(current_s->className, sizeof(current_s->className),
+                   current->name);
+        } else {
+          continue;
         }
+        current_s = current_s->next;
       }
     }
+    current = current->next;
   }
+
   if (!classExists) {
     printf("\nIl n'existe pas de classe avec cet identifiant.\n");
   } else {
@@ -142,8 +169,8 @@ void updateClass(struct CLASS *pClasses[100], struct STUDENT *pStudents[100]) {
   }
 }
 
-void deleteClass(struct CLASS *pClasses[100], struct STUDENT *pStudent[100],
-                 int *pLastClassId, int *pLastStudentId) {
+void deleteClass() {
+
   system("cls");
   printf("Pour supprimer une classe, il faut l'ID de cette classe avant la "
          "suppression : ");
@@ -153,52 +180,41 @@ void deleteClass(struct CLASS *pClasses[100], struct STUDENT *pStudent[100],
   scanf_s("%d", &tmpClassId);
   clearInputBuffer();
   char tmpClassNameForDeleteStudents[100];
-  for (int i = 0; i < 100; i++) {
-    if (pClasses[i]->id == tmpClassId) {
+  current = first;
+  previous = NULL;
+  while (current != NULL) {
+    if (current->id == tmpClassId) {
       classExists = true;
       strcpy_s(tmpClassNameForDeleteStudents,
-               sizeof(tmpClassNameForDeleteStudents), pClasses[i]->name);
-      for (int j = i; j < 99; j++) {
-        pClasses[j]->id = pClasses[j + 1]->id;
-        strcpy_s(pClasses[j]->name, sizeof(pClasses[j]->name),
-                 pClasses[j + 1]->name);
-        strcpy_s(pClasses[j]->date, sizeof(pClasses[j]->date),
-                 pClasses[j + 1]->date);
-        pClasses[j]->studentsNumber = pClasses[j + 1]->studentsNumber;
+               sizeof(tmpClassNameForDeleteStudents), current->name);
 
-        pClasses[99]->id = -1;
-      }
-      for (size_t x = 0; x < 100; x++) {
-        if (pStudent[x]->id != -1) {
-          if (!strcmp(pStudent[x]->className, tmpClassNameForDeleteStudents)) {
-            for (int y = x; y < 99; y++) {
-              pStudent[x]->id = pStudent[x + 1]->id;
-              pStudent[x]->age = pStudent[x + 1]->age;
-              strcpy_s(pStudent[x]->firstName, sizeof(pStudent[x]->firstName),
-                       pStudent[x + 1]->firstName);
-              strcpy_s(pStudent[x]->lastName, sizeof(pStudent[x]->lastName),
-                       pStudent[x + 1]->lastName);
-              strcpy_s(pStudent[x]->email, sizeof(pStudent[x]->email),
-                       pStudent[x + 1]->email);
-              strcpy_s(pStudent[x]->className, sizeof(pStudent[x]->className),
-                       pStudent[x + 1]->className);
-              pStudent[99]->id = -1;
-            }
-          } else {
-            continue;
-          }
+      previous->next = current->next;
+      free(current);
+      current = NULL;
+
+      current_s = first_s;
+      while (current_s != NULL) {
+        if (!strcmp(current_s->className, tmpClassNameForDeleteStudents)) {
+          previous_s->next = current_s->next;
+          free(current_s);
+        } else {
+          continue;
         }
+        current_s = current_s->next;
       }
       break;
     }
+    previous = current;
+    current = current->next;
   }
+
   if (!classExists)
     printf("\nIl n'existe pas de classe avec cet identifiant.\n");
   else
     printf("\nL'opération a réussi avec succès.\n");
 }
 
-void classInformation(struct CLASS *pClasses[100]) {
+void classInformation() {
   int tmpClassId;
   system("cls");
   printf("Pour voir les informations d'une classe, il faut l'ID de cette "
@@ -208,16 +224,20 @@ void classInformation(struct CLASS *pClasses[100]) {
   clearInputBuffer();
   system("cls");
   bool classExists = false;
-  for (int i = 0; i < 100; i++) {
-    if (pClasses[i]->id == tmpClassId) {
+
+  current = first;
+
+  while (current != NULL) {
+    if (current->id == tmpClassId) {
       classExists = true;
       printf("_______________________________________________________\n\n");
-      printf("id                 :: %d\n", pClasses[i]->id);
-      printf("nom de class       :: %s\n", pClasses[i]->name);
-      printf("nombre d'élèves    :: %d\n", pClasses[i]->studentsNumber);
-      printf("date               :: %s\n", pClasses[i]->date);
+      printf("id                 :: %d\n", current->id);
+      printf("nom de class       :: %s\n", current->name);
+      printf("nombre d'élèves    :: %d\n", current->studentsNumber);
+      printf("date               :: %s\n", current->date);
       printf("_______________________________________________________\n\n");
     }
+    current = current->next;
   }
   if (!classExists)
     printf("\nIl n'existe pas de classe avec ce identifiant.\n");
@@ -225,19 +245,22 @@ void classInformation(struct CLASS *pClasses[100]) {
     printf("\nL'opération a réussi avec succès.\n");
 }
 
-void allClassesInformation(struct CLASS *pClasses[100]) {
+void allClassesInformation() {
   system("cls");
   bool classExists = false;
-  for (int i = 0; i < 100; i++) {
-    if (pClasses[i]->id != -1) {
-      classExists = true;
-      printf("id                   :: %d\n", pClasses[i]->id);
-      printf("nom de class         :: %s\n", pClasses[i]->name);
-      printf("nombre d'élèves      :: %d\n", pClasses[i]->studentsNumber);
-      printf("date                 :: %s\n", pClasses[i]->date);
-      printf("_______________________________________________________\n\n");
-    }
+  current = first;
+
+  while (current != NULL) {
+    classExists = true;
+    printf("_______________________________________________________\n\n");
+    printf("id                 :: %d\n", current->id);
+    printf("nom de class       :: %s\n", current->name);
+    printf("nombre d'élèves    :: %d\n", current->studentsNumber);
+    printf("date               :: %s\n", current->date);
+    printf("_______________________________________________________\n\n");
+    current = current->next;
   }
+
   if (!classExists) {
     printf("\nIl n'y a aucune classe dans ces écoles.\n");
 
@@ -338,9 +361,7 @@ int choseOperation(void) {
   }
 }
 
-void createNewStudent(struct STUDENT *pStudent[100],
-                      struct CLASS *pClasses[100], int *pLastStudentId,
-                      struct CLASS classes[100]) {
+void createNewStudent(int *pLastStudentId) {
   system("cls");
 
   time_t currentTime;
@@ -355,127 +376,126 @@ void createNewStudent(struct STUDENT *pStudent[100],
   char tmpEmail[100];
   char tmpClassName[100];
   int tmpAge;
-  for (int i = 0; i < 100; i++) {
-    if (pStudent[i]->id == -1) {
-      //  id ##################
-      pStudent[i]->id = *pLastStudentId;
-      *pLastStudentId = (*pLastStudentId) + 1;
-      //  first name ##################
-      size_t len;
-      bool isFirstNameValid = false;
-      bool isLastNameValid = false;
-      bool isAgeValid = false;
-      bool isEmailValidBool = false;
-      while (!isFirstNameValid) {
-        printf("S'il te plaît, entre ton prénom :\n\t==> ");
-        fgets(tmpFirstName, sizeof(tmpFirstName), stdin);
-        len = strlen(tmpFirstName);
-        if (len > 0 && tmpFirstName[len - 1] == '\n') {
-          tmpFirstName[len - 1] = '\0';
-        }
-        if (isHummanNameValid(tmpFirstName)) {
-          strcpy_s(pStudent[i]->firstName, sizeof(pStudent[i]->firstName),
-                   tmpFirstName);
-          isFirstNameValid = true;
-        } else {
-          system("cls");
-          printf("Ce prénom contient des caractères interdits ou est trop "
-                 "court ou trop long.(5,100)\n\t");
-        }
-      }
 
-      //  last name ##################
+  current_s = (struct STUDENT_LINKED_LISTS *)malloc(
+      sizeof(struct STUDENT_LINKED_LISTS));
 
-      while (!isLastNameValid) {
-        printf("S'il te plaît, entre ton nom:\n\t==> ");
-        fgets(tmpLastName, sizeof(tmpLastName), stdin);
-        len = strlen(tmpLastName);
-        if (len > 0 && tmpLastName[len - 1] == '\n') {
-          tmpLastName[len - 1] = '\0';
-        }
+  if (first_s == NULL) {
+    first_s = current_s;
+  }
+  if (previous_s != NULL) {
+    previous_s->next = current_s;
+  }
 
-        strcpy_s(pStudent[i]->lastName, sizeof(pStudent[i]->lastName),
-                 tmpLastName);
+  current_s->id = *pLastStudentId;
+  *pLastStudentId = (*pLastStudentId) + 1;
 
-        if (isHummanNameValid(tmpLastName)) {
-          strcpy_s(pStudent[i]->lastName, sizeof(pStudent[i]->lastName),
-                   tmpLastName);
-          isLastNameValid = true;
-        } else {
-          system("cls");
-          printf("Ce nom contient des caractères interdits ou est trop "
-                 "court ou trop long.(5,100)\n\t");
-        }
-      }
+  size_t len;
+  bool isFirstNameValid = false;
+  bool isLastNameValid = false;
+  bool isAgeValid = false;
+  bool isEmailValidBool = false;
 
-      //  age ##################
-      while (!isAgeValid) {
-        bool isNumber;
-        printf("S'il te plaît, entre ton âge:\n\t==> ");
-        isNumber = scanf_s("%d", &tmpAge);
-        if (isNumber && tmpAge > 15 && tmpAge < 25) {
-          pStudent[i]->age = tmpAge;
-          isAgeValid = true;
-        } else {
-          system("cls");
-          printf("S'il te plaît, entre un âge valide entre 15 et 25.\n\t");
-        }
-        clearInputBuffer();
-      }
-      //  email ################
-      while (!isEmailValidBool) {
-        printf("S'il te plaît, entre ton email:\n\t==> ");
-        fgets(tmpEmail, sizeof(tmpEmail), stdin);
-        len = strlen(tmpEmail);
-        if (len > 0 && tmpEmail[len - 1] == '\n') {
-          tmpEmail[len - 1] = '\0';
-        }
-        if (isEmailValid(tmpEmail)) {
-          strcpy_s(pStudent[i]->email, sizeof(pStudent[i]->email), tmpEmail);
-          strcpy_s(pStudent[i]->date, sizeof(pStudent[i]->date), formattedTime);
-          isEmailValidBool = true;
-        } else {
-          system("cls");
-          printf("S'il te plaît, entre un email valide.\n\t");
-        }
-      }
-
-      //  class  ################
-      printf("S'il te plaît, entre ta classe:\n\t==> ");
-      bool isTheSame = false;
-      while (!isTheSame) {
-        fgets(tmpClassName, sizeof(tmpClassName), stdin);
-        len = strlen(tmpClassName);
-        if (len > 0 && tmpClassName[len - 1] == '\n') {
-          tmpClassName[len - 1] = '\0';
-        }
-        for (size_t i = 0; i < 100; i++) {
-          if (!strcmp(classes[i].name, tmpClassName)) {
-            isTheSame = true;
-            break;
-          }
-        }
-        if (!isTheSame) {
-          system("cls");
-          printf("Cette classe n'existe pas dans l'école??\n");
-          printf("S'il te plaît, entre ta classe::\n\t");
-        }
-      }
-      strcpy_s(pStudent[i]->className, sizeof(pStudent[i]->className),
-               tmpClassName);
-      for (size_t j = 0; j < 100; j++) {
-        if (!strcmp(tmpClassName, pClasses[j]->name)) {
-          pClasses[j]->studentsNumber = pClasses[j]->studentsNumber + 1;
-          break;
-        }
-      }
-      break;
+  while (!isFirstNameValid) {
+    printf("S'il te plaît, entre ton prénom :\n\t==> ");
+    fgets(tmpFirstName, sizeof(tmpFirstName), stdin);
+    len = strlen(tmpFirstName);
+    if (len > 0 && tmpFirstName[len - 1] == '\n') {
+      tmpFirstName[len - 1] = '\0';
+    }
+    if (isHummanNameValid(tmpFirstName)) {
+      strcpy_s(current_s->firstName, sizeof(current_s->firstName),
+               tmpFirstName);
+      isFirstNameValid = true;
+    } else {
+      system("cls");
+      printf("Ce prénom contient des caractères interdits ou est trop "
+             "court ou trop long.(5,100)\n\t");
     }
   }
+  while (!isLastNameValid) {
+    printf("S'il te plaît, entre ton nom:\n\t==> ");
+    fgets(tmpLastName, sizeof(tmpLastName), stdin);
+    len = strlen(tmpLastName);
+    if (len > 0 && tmpLastName[len - 1] == '\n') {
+      tmpLastName[len - 1] = '\0';
+    }
+
+    if (isHummanNameValid(tmpLastName)) {
+      strcpy_s(current_s->lastName, sizeof(current_s->lastName), tmpLastName);
+      isLastNameValid = true;
+    } else {
+      system("cls");
+      printf("Ce nom contient des caractères interdits ou est trop "
+             "court ou trop long.(5,100)\n\t");
+    }
+  }
+
+  while (!isAgeValid) {
+    bool isNumber;
+    printf("S'il te plaît, entre ton âge:\n\t==> ");
+    isNumber = scanf_s("%d", &tmpAge);
+    if (isNumber && tmpAge > 15 && tmpAge < 25) {
+      current_s->age = tmpAge;
+      isAgeValid = true;
+    } else {
+      system("cls");
+      printf("S'il te plaît, entre un âge valide entre 15 et 25.\n\t");
+    }
+    clearInputBuffer();
+  }
+
+  while (!isEmailValidBool) {
+    printf("S'il te plaît, entre ton email:\n\t==> ");
+    fgets(tmpEmail, sizeof(tmpEmail), stdin);
+    len = strlen(tmpEmail);
+    if (len > 0 && tmpEmail[len - 1] == '\n') {
+      tmpEmail[len - 1] = '\0';
+    }
+    if (isEmailValid(tmpEmail)) {
+      strcpy_s(current_s->email, sizeof(current_s->email), tmpEmail);
+      strcpy_s(current_s->date, sizeof(current_s->date), formattedTime);
+      isEmailValidBool = true;
+    } else {
+      system("cls");
+      printf("S'il te plaît, entre un email valide.\n\t");
+    }
+  }
+
+  printf("S'il te plaît, entre ta classe:\n\t==> ");
+  bool isTheSame = false;
+  while (!isTheSame) {
+    fgets(tmpClassName, sizeof(tmpClassName), stdin);
+    len = strlen(tmpClassName);
+    if (len > 0 && tmpClassName[len - 1] == '\n') {
+      tmpClassName[len - 1] = '\0';
+    }
+
+    struct CLASS_LINKED_LISTS *tmpCurrent = first;
+    while (tmpCurrent != NULL) {
+      if (!strcmp(tmpCurrent->name, tmpClassName)) {
+        tmpCurrent->studentsNumber = tmpCurrent->studentsNumber + 1;
+        isTheSame = true;
+        break;
+      }
+      tmpCurrent = tmpCurrent->next;
+    }
+
+    if (!isTheSame) {
+      system("cls");
+      printf("Cette classe n'existe pas dans l'école??\n");
+      printf("S'il te plaît, entre ta classe::\n\t");
+    }
+  }
+
+  strcpy_s(current_s->className, sizeof(current_s->className), tmpClassName);
+
+  current_s->next = NULL;
+  previous_s = current_s;
   printf("\nL'opération a réussi avec succès.\n");
 }
 
-void updateStudent(struct STUDENT *pStudent[100], struct CLASS *pClasses[100]) {
+void updateStudent() {
 
   system("cls");
   bool studentExists = false;
@@ -485,11 +505,14 @@ void updateStudent(struct STUDENT *pStudent[100], struct CLASS *pClasses[100]) {
   int tmpStudentId;
   scanf_s("%d", &tmpStudentId);
   clearInputBuffer();
-  for (int i = 0; i < 100; i++) {
-    if (pStudent[i]->id == tmpStudentId) {
+
+  current_s = first_s;
+
+  while (current_s != NULL) {
+    if (current_s->id == tmpStudentId) {
       char oldClassName[100];
 
-      strcpy_s(oldClassName, sizeof(oldClassName), pStudent[i]->className);
+      strcpy_s(oldClassName, sizeof(oldClassName), current_s->className);
 
       studentExists = true;
       char tmpFirstName[100];
@@ -510,7 +533,7 @@ void updateStudent(struct STUDENT *pStudent[100], struct CLASS *pClasses[100]) {
           tmpFirstName[len - 1] = '\0';
         }
         if (isHummanNameValid(tmpFirstName)) {
-          strcpy_s(pStudent[i]->firstName, sizeof(pStudent[i]->firstName),
+          strcpy_s(current_s->firstName, sizeof(current_s->firstName),
                    tmpFirstName);
           isFirstNameValid = true;
         } else {
@@ -528,11 +551,10 @@ void updateStudent(struct STUDENT *pStudent[100], struct CLASS *pClasses[100]) {
           tmpLastName[len - 1] = '\0';
         }
 
-        strcpy_s(pStudent[i]->lastName, sizeof(pStudent[i]->lastName),
-                 tmpLastName);
+        strcpy_s(current_s->lastName, sizeof(current_s->lastName), tmpLastName);
 
         if (isHummanNameValid(tmpLastName)) {
-          strcpy_s(pStudent[i]->lastName, sizeof(pStudent[i]->lastName),
+          strcpy_s(current_s->lastName, sizeof(current_s->lastName),
                    tmpLastName);
           isLastNameValid = true;
         } else {
@@ -548,7 +570,7 @@ void updateStudent(struct STUDENT *pStudent[100], struct CLASS *pClasses[100]) {
         printf("S'il te plaît, entre le nouvel âge:\n\t==> ");
         isNumber = scanf_s("%d", &tmpAge);
         if (isNumber && tmpAge > 15 && tmpAge < 25) {
-          pStudent[i]->age = tmpAge;
+          current_s->age = tmpAge;
           isAgeValid = true;
         } else {
           system("cls");
@@ -556,6 +578,7 @@ void updateStudent(struct STUDENT *pStudent[100], struct CLASS *pClasses[100]) {
         }
         clearInputBuffer();
       }
+
       bool isEmailValidBool = false;
       while (!isEmailValidBool) {
         printf("S'il te plaît, entre le nouvel email:\n\t==> ");
@@ -565,7 +588,7 @@ void updateStudent(struct STUDENT *pStudent[100], struct CLASS *pClasses[100]) {
           tmpEmail[len - 1] = '\0';
         }
         if (isEmailValid(tmpEmail)) {
-          strcpy_s(pStudent[i]->email, sizeof(pStudent[i]->email), tmpEmail);
+          strcpy_s(current_s->email, sizeof(current_s->email), tmpEmail);
           isEmailValidBool = true;
         } else {
           system("cls");
@@ -584,30 +607,30 @@ void updateStudent(struct STUDENT *pStudent[100], struct CLASS *pClasses[100]) {
           tmpClassName[len - 1] = '\0';
         }
 
-        for (size_t x = 0; x < 100; x++) {
-          if (!strcmp(pClasses[x]->name, tmpClassName)) {
+        current = first;
+        while (current != NULL) {
+          if (!strcmp(current->name, tmpClassName)) {
             isTheSame = true;
-            strcpy_s(pStudent[x]->className, sizeof(pStudent[x]->className),
+
+            strcpy_s(current_s->className, sizeof(current_s->className),
                      tmpClassName);
 
             if (strcmp(oldClassName, tmpClassName)) {
-              for (size_t j = 0; j < 100; j++) {
-                if (!strcmp(tmpClassName, pClasses[j]->name)) {
-                  pClasses[j]->studentsNumber = pClasses[j]->studentsNumber + 1;
-                  break;
-                }
-              }
 
-              for (size_t j = 0; j < 100; j++) {
-                if (!strcmp(oldClassName, pClasses[j]->name)) {
-                  pClasses[j]->studentsNumber = pClasses[j]->studentsNumber - 1;
+              current->studentsNumber = current->studentsNumber + 1;
+
+              struct CLASS_LINKED_LISTS *tmpCurrent = first;
+              while (tmpCurrent) {
+                if (!strcmp(oldClassName, tmpCurrent->name)) {
+                  tmpCurrent->studentsNumber = tmpCurrent->studentsNumber - 1;
                   break;
                 }
+                tmpCurrent = tmpCurrent->next;
               }
             }
-
             break;
           }
+          current = current->next;
         }
 
         if (!isTheSame) {
@@ -618,6 +641,7 @@ void updateStudent(struct STUDENT *pStudent[100], struct CLASS *pClasses[100]) {
       }
       break;
     }
+    current_s = current_s->next;
   }
   if (!studentExists)
     printf("\nIl n'existe pas d'élève avec cet identifiant.\n");
@@ -625,8 +649,8 @@ void updateStudent(struct STUDENT *pStudent[100], struct CLASS *pClasses[100]) {
     printf("\nL'opération a réussi avec succès.\n");
 }
 
-void deleteStudent(struct STUDENT *pStudent[100], struct CLASS *pClasses[100],
-                   int *pLastStudentId) {
+void deleteStudent() {
+
   system("cls");
 
   printf("Pour supprimer un étudiant, il faut l'ID de cet étudiant avant la "
@@ -637,39 +661,39 @@ void deleteStudent(struct STUDENT *pStudent[100], struct CLASS *pClasses[100],
   char tmpClasseName[100];
   scanf_s("%d", &tmpStudentId);
   clearInputBuffer();
-  for (int i = 0; i < 99; i++) {
-    if (pStudent[i]->id == tmpStudentId) {
-      strcpy_s(tmpClasseName, sizeof(tmpClasseName), pStudent[i]->className);
+
+  current_s = first_s;
+  previous_s = NULL;
+
+  current = first;
+
+  while (current_s != NULL) {
+    if (current_s->id == tmpStudentId) {
+      strcpy_s(tmpClasseName, sizeof(tmpClasseName), current_s->className);
       studentExists = true;
-      for (int j = i; j < 99; j++) {
-        pStudent[j]->id = pStudent[j + 1]->id;
-        pStudent[j]->age = pStudent[j + 1]->age;
-        strcpy_s(pStudent[j]->firstName, sizeof(pStudent[j]->firstName),
-                 pStudent[j + 1]->firstName);
-        strcpy_s(pStudent[j]->lastName, sizeof(pStudent[j]->lastName),
-                 pStudent[j + 1]->lastName);
-        strcpy_s(pStudent[j]->email, sizeof(pStudent[j]->email),
-                 pStudent[j + 1]->email);
-        strcpy_s(pStudent[j]->className, sizeof(pStudent[j]->className),
-                 pStudent[j + 1]->className);
-        pStudent[99]->id = -1;
-      }
-      for (size_t j = 0; j < 100; j++) {
-        if (!strcmp(tmpClasseName, pClasses[j]->name)) {
-          pClasses[j]->studentsNumber = pClasses[j]->studentsNumber - 1;
+      previous_s->next = current_s->next;
+
+      while (current != NULL) {
+        if (!strcmp(tmpClasseName, current->name)) {
+          current->studentsNumber = current->studentsNumber - 1;
           break;
         }
+        current = current->next;
       }
       break;
     }
+    current_s = current_s->next;
+    previous_s = current_s;
   }
+
   if (!studentExists)
     printf("\nIl n'existe pas d'élève avec cet identifiant.\n");
   else
     printf("\nL'opération a réussi avec succès.\n");
 }
 
-void studentInformation(struct STUDENT *pStudents[100]) {
+void studentInformation() {
+
   bool studentExists = false;
   system("cls");
   printf("Pour voir les informations d'un étudiant, il faut l'ID de cet "
@@ -679,19 +703,23 @@ void studentInformation(struct STUDENT *pStudents[100]) {
   scanf_s("%d", &tmpStudentId);
   clearInputBuffer();
   system("cls");
-  for (int i = 0; i < 100; i++)
-    if (pStudents[i]->id == tmpStudentId) {
+
+  current_s = first_s;
+  while (current_s != NULL) {
+    if (current_s->id == tmpStudentId) {
       studentExists = true;
       printf("_______________________________________________________\n\n");
-      printf("id                   :: %d\n", pStudents[i]->id);
-      printf("prénom               :: %s\n", pStudents[i]->firstName);
-      printf("nom de famille       :: %s\n", pStudents[i]->lastName);
-      printf("âge                  :: %d\n", pStudents[i]->age);
-      printf("mail                 :: %s\n", pStudents[i]->email);
-      printf("classe               :: %s\n", pStudents[i]->className);
-      printf("date                 :: %s\n", pStudents[i]->date);
+      printf("id                   :: %d\n", current_s->id);
+      printf("prénom               :: %s\n", current_s->firstName);
+      printf("nom de famille       :: %s\n", current_s->lastName);
+      printf("âge                  :: %d\n", current_s->age);
+      printf("mail                 :: %s\n", current_s->email);
+      printf("classe               :: %s\n", current_s->className);
+      printf("date                 :: %s\n", current_s->date);
       printf("_______________________________________________________\n\n");
     }
+    current_s = current_s->next;
+  }
 
   if (!studentExists)
     printf("\nIl n'existe pas d'élève avec cet identifiant.\n");
@@ -699,29 +727,33 @@ void studentInformation(struct STUDENT *pStudents[100]) {
     printf("\nL'opération a réussi avec succès.\n");
 }
 
-void allStudentsInformation(struct STUDENT *pStudents[100]) {
+void allStudentsInformation() {
   bool studentExists = false;
   system("cls");
 
-  for (int i = 0; i < 100; i++)
-    if (pStudents[i]->id != -1) {
-      studentExists = true;
-      printf("id                   :: %d\n", pStudents[i]->id);
-      printf("prénom               :: %s\n", pStudents[i]->firstName);
-      printf("nom de famille       :: %s\n", pStudents[i]->lastName);
-      printf("âge                  :: %d\n", pStudents[i]->age);
-      printf("mail                 :: %s\n", pStudents[i]->email);
-      printf("classe               :: %s\n", pStudents[i]->className);
-      printf("date                 :: %s\n", pStudents[i]->date);
-      printf("_______________________________________________________\n\n");
-    }
+  current_s = first_s;
+  while (current_s != NULL) {
+    studentExists = true;
+    printf("_______________________________________________________\n\n");
+    printf("id                   :: %d\n", current_s->id);
+    printf("prénom               :: %s\n", current_s->firstName);
+    printf("nom de famille       :: %s\n", current_s->lastName);
+    printf("âge                  :: %d\n", current_s->age);
+    printf("mail                 :: %s\n", current_s->email);
+    printf("classe               :: %s\n", current_s->className);
+    printf("date                 :: %s\n", current_s->date);
+    printf("_______________________________________________________\n\n");
+    current_s = current_s->next;
+  }
+
   if (!studentExists)
     printf("\nIl n'existe pas d'élève dans cette école.\n");
   else
     printf("\nL'opération a réussi avec succès.\n");
 }
 
-void getDataFromFileClasses(struct CLASS *pClasses[100], int *pLastClassId) {
+void getDataFromFileClasses(int *pLastClassId) {
+
   FILE *pFile = NULL;
   pFile = fopen("classes.txt", "r");
   char myString[1000];
@@ -759,6 +791,15 @@ void getDataFromFileClasses(struct CLASS *pClasses[100], int *pLastClassId) {
     char *subToken = (char *)strtok_s(subString, subDelimiter, &inner_saveptr);
 
     state = id;
+    current =
+        (struct CLASS_LINKED_LISTS *)malloc(sizeof(struct CLASS_LINKED_LISTS));
+
+    if (first == NULL) {
+      first = current;
+    }
+    if (previous != NULL) {
+      previous->next = current;
+    }
     while (subToken != NULL) {
       switch (state) {
       case 0:
@@ -766,41 +807,39 @@ void getDataFromFileClasses(struct CLASS *pClasses[100], int *pLastClassId) {
         break;
       case 1:
         number = atoi(subToken);
-        pClasses[lastClassId]->id = number;
+        current->id = number;
         break;
       case 2:
         // do nothing
         break;
       case 3:
-        strcpy_s(pClasses[lastClassId]->name,
-                 sizeof(pClasses[lastClassId]->name), subToken);
+        strcpy_s(current->name, sizeof(current->name), subToken);
         break;
       case 4:
         // do nothing
         break;
       case 5:
         number = atoi(subToken);
-        pClasses[lastClassId]->studentsNumber = number;
+        current->studentsNumber = number;
         break;
       case 6:
         // do nothing
         break;
       case 7:
-        strcpy_s(pClasses[lastClassId]->date,
-                 sizeof(pClasses[lastClassId]->date), subToken);
-        lastClassId = lastClassId + 1;
+        strcpy_s(current->date, sizeof(current->date), subToken);
         *pLastClassId = *pLastClassId + 1;
         break;
       }
       state = state + 1;
       subToken = (char *)strtok_s(NULL, subDelimiter, &inner_saveptr);
     }
+    current->next = NULL;
+    previous = current;
     token = (char *)strtok_s(NULL, delimiter, &outer_saveptr);
   }
 }
 
-void getDataFromFileStudents(struct STUDENT *pStudent[100],
-                             int *pLastStudentId) {
+void getDataFromFileStudents(int *pLastStudentId) {
   FILE *pFile = NULL;
   pFile = fopen("students.txt", "r");
   char myString[1000];
@@ -844,6 +883,15 @@ void getDataFromFileStudents(struct STUDENT *pStudent[100],
     char *subToken = (char *)strtok_s(subString, subDelimiter, &inner_saveptr);
 
     state = id;
+    current_s = (struct STUDENT_LINKED_LISTS *)malloc(
+        sizeof(struct STUDENT_LINKED_LISTS));
+
+    if (first_s == NULL) {
+      first_s = current_s;
+    }
+    if (previous_s != NULL) {
+      previous_s->next = current_s;
+    }
     while (subToken != NULL) {
       switch (state) {
       case 0:
@@ -851,49 +899,44 @@ void getDataFromFileStudents(struct STUDENT *pStudent[100],
         break;
       case 1:
         number = atoi(subToken);
-        pStudent[lastStudentId]->id = number;
+        current_s->id = number;
         break;
       case 2:
         // do nothing
         break;
       case 3:
-        strcpy_s(pStudent[lastStudentId]->firstName,
-                 sizeof(pStudent[lastStudentId]->firstName), subToken);
+        strcpy_s(current_s->firstName, sizeof(current_s->firstName), subToken);
         break;
       case 4:
         // do nothing
         break;
       case 5:
-        strcpy_s(pStudent[lastStudentId]->lastName,
-                 sizeof(pStudent[lastStudentId]->lastName), subToken);
+        strcpy_s(current_s->lastName, sizeof(current_s->lastName), subToken);
         break;
       case 6:
         // do nothing
         break;
       case 7:
         number = atoi(subToken);
-        pStudent[lastStudentId]->age = number;
+        current_s->age = number;
         break;
       case 8:
         // do nothing
         break;
       case 9:
-        strcpy_s(pStudent[lastStudentId]->email,
-                 sizeof(pStudent[lastStudentId]->email), subToken);
+        strcpy_s(current_s->email, sizeof(current_s->email), subToken);
         break;
       case 10:
         // do nothing
         break;
       case 11:
-        strcpy_s(pStudent[lastStudentId]->className,
-                 sizeof(pStudent[lastStudentId]->className), subToken);
+        strcpy_s(current_s->className, sizeof(current_s->className), subToken);
         break;
       case 12:
         // do nothing
         break;
       case 13:
-        strcpy_s(pStudent[lastStudentId]->date,
-                 sizeof(pStudent[lastStudentId]->date), subToken);
+        strcpy_s(current_s->date, sizeof(current_s->date), subToken);
         lastStudentId = lastStudentId + 1;
         *pLastStudentId = *pLastStudentId + 1;
         break;
@@ -901,11 +944,13 @@ void getDataFromFileStudents(struct STUDENT *pStudent[100],
       state = state + 1;
       subToken = (char *)strtok_s(NULL, subDelimiter, &inner_saveptr);
     }
+    current_s->next = NULL;
+    previous_s = current_s;
     token = (char *)strtok_s(NULL, delimiter, &outer_saveptr);
   }
 }
 
-void putDataIntoFileClasses(struct CLASS *pClasses[100]) {
+void putDataIntoFileClasses() {
   FILE *pFile = NULL;
   pFile = fopen("classes.txt", "w");
   if (pFile != NULL) {
@@ -918,14 +963,22 @@ void putDataIntoFileClasses(struct CLASS *pClasses[100]) {
   pFile = NULL;
 
   pFile = fopen("classes.txt", "a");
+
+  current = first;
+  previous = NULL;
   if (pFile != NULL) {
-    for (int i = 0; i < 100; i++) {
-      if (pClasses[i]->id != -1) {
-        fprintf(pFile, "id:%d,", pClasses[i]->id);
-        fprintf(pFile, "name:%s,", pClasses[i]->name);
-        fprintf(pFile, "studentsNumber:%d,", pClasses[i]->studentsNumber);
-        fprintf(pFile, "date:%s|", pClasses[i]->date);
-      }
+
+    while (current != NULL) {
+
+      fprintf(pFile, "id:%d,", current->id);
+      fprintf(pFile, "name:%s,", current->name);
+      fprintf(pFile, "studentsNumber:%d,", current->studentsNumber);
+      fprintf(pFile, "date:%s|", current->date);
+
+      previous = current;
+      current = current->next;
+      free(previous);
+      previous = NULL;
     }
   }
 
@@ -933,7 +986,7 @@ void putDataIntoFileClasses(struct CLASS *pClasses[100]) {
   pFile = NULL;
 }
 
-void putDataIntoFileStudents(struct STUDENT *pStudents[100]) {
+void putDataIntoFileStudents() {
   FILE *pFile = NULL;
   pFile = fopen("students.txt", "w");
   if (pFile != NULL) {
@@ -946,16 +999,24 @@ void putDataIntoFileStudents(struct STUDENT *pStudents[100]) {
   pFile = NULL;
   pFile = fopen("students.txt", "a");
   if (pFile != NULL) {
-    for (int i = 0; i < 100; i++) {
-      if (pStudents[i]->id != -1) {
-        fprintf(pFile, "id:%d,", pStudents[i]->id);
-        fprintf(pFile, "firstName:%s,", pStudents[i]->firstName);
-        fprintf(pFile, "lastName:%s,", pStudents[i]->lastName);
-        fprintf(pFile, "age:%d,", pStudents[i]->age);
-        fprintf(pFile, "email:%s,", pStudents[i]->email);
-        fprintf(pFile, "className:%s,", pStudents[i]->className);
-        fprintf(pFile, "date:%s|", pStudents[i]->date);
-      }
+
+    current_s = first_s;
+    previous_s = NULL;
+
+    while (current_s != NULL) {
+
+      fprintf(pFile, "id:%d,", current_s->id);
+      fprintf(pFile, "firstName:%s,", current_s->firstName);
+      fprintf(pFile, "lastName:%s,", current_s->lastName);
+      fprintf(pFile, "age:%d,", current_s->age);
+      fprintf(pFile, "email:%s,", current_s->email);
+      fprintf(pFile, "className:%s,", current_s->className);
+      fprintf(pFile, "date:%s|", current_s->date);
+
+      previous_s = current_s;
+      current_s = current_s->next;
+      free(previous_s);
+      previous_s = NULL;
     }
   }
 

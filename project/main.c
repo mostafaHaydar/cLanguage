@@ -2,7 +2,6 @@
 #include "myheader.h"
 #include <stdbool.h>
 #include <stdlib.h>
-#include <string.h>
 
 int main(void) {
 
@@ -12,86 +11,68 @@ int main(void) {
   int lastStudentId = 0;
   int *pLastStudentId = &lastStudentId;
 
-  struct CLASS classes[100];
-  struct CLASS *pClasses[100];
+  getDataFromFileClasses(pLastClassId);
 
-  struct STUDENT students[100];
-  struct STUDENT *pStudents[100];
-
-  for (size_t i = 0; i < 100; i++) {
-    pClasses[i] = &classes[i];
-    classes[i].id = -1;
-    strcpy_s(classes[i].name, sizeof(classes[i].name), "null");
-    classes[i].studentsNumber = 0;
-  }
-
-  for (int i = 0; i < 100; i++) {
-    pStudents[i] = &students[i];
-    students[i].id = -1;
-  }
-
-  getDataFromFileClasses(pClasses, pLastClassId);
-
-  getDataFromFileStudents(pStudents, pLastStudentId);
+  getDataFromFileStudents(pLastStudentId);
 
   while (true) {
     int userNumber;
     userNumber = choseOperation();
     switch (userNumber) {
     case 0:
-      createNewClass(pClasses, pLastClassId);
+      createNewClass(pLastClassId);
       if (backToMenu() == 0)
         break;
       break;
     case 1:
-      updateClass(pClasses, pStudents);
+      updateClass();
       if (backToMenu() == 0)
         break;
       break;
     case 2:
-      deleteClass(pClasses, pStudents, pLastClassId, pLastStudentId);
+      deleteClass();
       if (backToMenu() == 0)
         break;
       break;
     case 3:
-      classInformation(pClasses);
+      classInformation();
       if (backToMenu() == 0)
         break;
       break;
     case 4:
-      allClassesInformation(pClasses);
+      allClassesInformation();
       if (backToMenu() == 0)
         break;
       break;
     case 5:
-      createNewStudent(pStudents, pClasses, pLastStudentId, classes);
+      createNewStudent(pLastStudentId);
       if (backToMenu() == 0)
         break;
       break;
     case 6:
-      updateStudent(pStudents, pClasses);
+      updateStudent();
       if (backToMenu() == 0)
         break;
       break;
     case 7:
-      deleteStudent(pStudents, pClasses, pLastStudentId);
+      deleteStudent();
       if (backToMenu() == 0)
         break;
       break;
     case 8:
-      studentInformation(pStudents);
+      studentInformation();
       if (backToMenu() == 0)
         break;
       break;
     case 9:
-      allStudentsInformation(pStudents);
+      allStudentsInformation();
       if (backToMenu() == 0)
         break;
       break;
     case 10:
       system("cls");
-      putDataIntoFileClasses(pClasses);
-      putDataIntoFileStudents(pStudents);
+      putDataIntoFileClasses();
+      putDataIntoFileStudents();
       exit(1);
       break;
     default:
