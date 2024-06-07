@@ -33,20 +33,19 @@ int main() {
         else {
             nombre=tentative /100; // dans ce cas dans la premiere chiffre
             if(nombre==nombre_aleatoire /100){
-                printf("-------------------le premiere chiffre est correct: %d** \n",nombre);}
+                printf("--------------le premiere chiffre est correct :%d** \n",nombre);}
             else{
                 printf("le premier chiffre est incorrect\n");
             }
             nombre=(tentative /10 )% 10; // dans ce cas dans la deuxieme chiffre
             if(nombre==(nombre_aleatoire /10)%10){
-                printf("-------------------le deuxieme chiffre est correct:*%d* \n",nombre);}
+                printf("--------------le deuxieme chiffre est correct: *%d* \n",nombre);}
             else{
-                printf(" le deuxieme chiffre est incorrect\n");
+                printf("le deuxieme chiffre est incorrect\n");
             }
-            
             nombre=tentative %10; //dans ce cas dans la troixieme chiffre
             if(nombre==nombre_aleatoire % 10){
-                printf("-------------------le troixieme chiffre est correct :**%d\n",nombre);}
+                printf("--------------le troixieme chiffre est correct: **%d\n",nombre);}
             else{
                 printf("le troixieme chiffre est incorrect\n");
             }
@@ -57,6 +56,3 @@ int main() {
 
      return 0;
     }
-
-
-
