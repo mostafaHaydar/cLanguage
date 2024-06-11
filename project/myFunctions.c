@@ -188,18 +188,42 @@ void deleteClass() {
       strcpy_s(tmpClassNameForDeleteStudents,
                sizeof(tmpClassNameForDeleteStudents), current->name);
 
-      previous->next = current->next;
-      free(current);
-      current = NULL;
+      if (first->next == NULL) {
+        free(first);
+        first = NULL;
+      } else {
+        if (previous != NULL) {
+          previous->next = current->next;
+          free(current);
+          current = NULL;
+        } else {
+          first = first->next;
+          free(current);
+          current = NULL;
+        }
+      }
 
       current_s = first_s;
+      previous_s = NULL;
       while (current_s != NULL) {
         if (!strcmp(current_s->className, tmpClassNameForDeleteStudents)) {
-          previous_s->next = current_s->next;
-          free(current_s);
-        } else {
-          continue;
+          if (first_s->next == NULL) {
+            free(first_s);
+            first_s = NULL;
+          } else {
+            if (previous_s != NULL) {
+              previous_s->next = current_s->next;
+              free(current_s);
+              current_s = NULL;
+            } else {
+              first_s = first_s->next;
+              free(current_s);
+              current_s = NULL;
+            }
+          }
+          break;
         }
+        previous_s = current_s;
         current_s = current_s->next;
       }
       break;
@@ -662,16 +686,27 @@ void deleteStudent() {
   scanf_s("%d", &tmpStudentId);
   clearInputBuffer();
 
-  current_s = first_s;
-  previous_s = NULL;
-
   current = first;
 
+  current_s = first_s;
+  previous_s = NULL;
   while (current_s != NULL) {
     if (current_s->id == tmpStudentId) {
       strcpy_s(tmpClasseName, sizeof(tmpClasseName), current_s->className);
-      studentExists = true;
-      previous_s->next = current_s->next;
+      if (first_s->next == NULL) {
+        free(first_s);
+        first_s = NULL;
+      } else {
+        if (previous_s != NULL) {
+          previous_s->next = current_s->next;
+          free(current_s);
+          current_s = NULL;
+        } else {
+          first_s = first_s->next;
+          free(current_s);
+          current_s = NULL;
+        }
+      }
 
       while (current != NULL) {
         if (!strcmp(tmpClasseName, current->name)) {
@@ -682,8 +717,8 @@ void deleteStudent() {
       }
       break;
     }
-    current_s = current_s->next;
     previous_s = current_s;
+    current_s = current_s->next;
   }
 
   if (!studentExists)

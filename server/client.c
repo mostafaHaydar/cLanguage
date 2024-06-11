@@ -80,7 +80,7 @@ void getLinksFromHTMLContent() {
   }
   for (size_t i = 0; i < 100; i++) {
     printf("%s\n", links[i]);
-    if(links[i][0]==0){
+    if (links[i][0] == 0) {
       break;
     }
   }
